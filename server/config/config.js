@@ -39,24 +39,12 @@ module.exports = {
     }
   ].filter(cal => cal.id), // Only include calendars with configured IDs
 
-  // Microsoft Todo lists to display
-  todoLists: [
-    {
-      id: process.env.TODO_LIST_ID_1,
-      name: 'Shopping',
-      color: '#FF5733'
-    },
-    {
-      id: process.env.TODO_LIST_ID_2,
-      name: 'Home Tasks',
-      color: '#33FF57'
-    },
-    {
-      id: process.env.TODO_LIST_ID_3,
-      name: 'Family',
-      color: '#3357FF'
-    }
-  ].filter(list => list.id), // Only include lists with configured IDs
+  // Microsoft Todo list to display
+  todoList: {
+    id: process.env.TODO_LIST_ID,
+    name: 'Tasks',
+    color: '#4fc3f7'
+  },
 
   // Cache settings
   cache: {

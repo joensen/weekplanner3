@@ -1,5 +1,5 @@
 const { google } = require('googleapis');
-const NodeCache = require('node-cache');
+const { NodeCache } = require('@cacheable/node-cache');
 const config = require('../config/config');
 const mockDataService = require('./mockDataService');
 

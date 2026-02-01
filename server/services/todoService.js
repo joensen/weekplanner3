@@ -1,4 +1,4 @@
-const NodeCache = require('node-cache');
+const { NodeCache } = require('@cacheable/node-cache');
 const config = require('../config/config');
 const mockDataService = require('./mockDataService');
 
@@ -155,18 +155,11 @@ class TodoService {
     console.log('Fetching fresh todo data from Microsoft Graph API...');
 
     try {
-      // Fetch tasks from all configured lists in parallel
-      const allListPromises = config.todoLists.map(list =>
-        this.fetchTasksFromList(list)
-      );
-
-      const results = await Promise.all(allListPromises);
-
-      // Merge all tasks
-      const allTasks = results.flat();
+      // Fetch tasks from the configured list
+      const tasks = await this.fetchTasksFromList(config.todoList);
 
       // Sort: high importance first, then by due date (soonest first), then by title
-      allTasks.sort((a, b) => {
+      tasks.sort((a, b) => {
         // Importance: high > normal > low
         const importanceOrder = { high: 0, normal: 1, low: 2 };
         const impA = importanceOrder[a.importance] || 1;
@@ -186,13 +179,13 @@ class TodoService {
       });
 
       const result = {
-        tasks: allTasks,
+        tasks: tasks,
         lastUpdated: new Date().toISOString()
       };
 
       // Cache the result
       cache.set('all_tasks', result);
-      console.log(`Fetched ${allTasks.length} tasks from ${config.todoLists.length} lists`);
+      console.log(`Fetched ${tasks.length} tasks`);
 
       return result;
     } catch (error) {

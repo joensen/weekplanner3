@@ -9,15 +9,19 @@ class HeaderRenderer {
   }
 
   /**
-   * Format date in Danish locale
+   * Format date in Danish locale: "Søndag 1. februar 2026"
    */
   formatDate(date) {
-    return date.toLocaleDateString('da-DK', {
-      weekday: 'long',
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric'
-    });
+    const weekdays = ['Søndag', 'Mandag', 'Tirsdag', 'Onsdag', 'Torsdag', 'Fredag', 'Lørdag'];
+    const months = ['januar', 'februar', 'marts', 'april', 'maj', 'juni',
+                    'juli', 'august', 'september', 'oktober', 'november', 'december'];
+
+    const weekday = weekdays[date.getDay()];
+    const day = date.getDate();
+    const month = months[date.getMonth()];
+    const year = date.getFullYear();
+
+    return `${weekday} ${day}. ${month} ${year}`;
   }
 
   /**

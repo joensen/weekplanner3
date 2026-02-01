@@ -6,75 +6,75 @@ class ThemeManager {
     this.themes = {
       1: {  // January - Winter
         name: 'Winter',
-        background: 'linear-gradient(180deg, #1a1a2e 0%, #16213e 100%)',
+        background: 'linear-gradient(180deg, #2a3a5e 0%, #1e3a5f 100%)',
         accent: '#4fc3f7',
-        headerBg: '#0d1b2a'
+        headerBg: '#1a2d4a'
       },
-      2: {  // February - Valentine
-        name: 'Valentine',
-        background: 'linear-gradient(180deg, #2d132c 0%, #801336 100%)',
-        accent: '#ff6b9d',
-        headerBg: '#1a0a1a'
+      2: {  // February - Late Winter
+        name: 'Late Winter',
+        background: 'linear-gradient(180deg, #2e3e5a 0%, #3a4a6a 100%)',
+        accent: '#80d4f7',
+        headerBg: '#1e2e4a'
       },
       3: {  // March - Spring
         name: 'Spring',
-        background: 'linear-gradient(180deg, #1a2e1a 0%, #2d4a2d 100%)',
+        background: 'linear-gradient(180deg, #2a4a3a 0%, #3a5a4a 100%)',
         accent: '#81c784',
-        headerBg: '#0d1a0d'
+        headerBg: '#1a3a2a'
       },
       4: {  // April - Easter
         name: 'Easter',
-        background: 'linear-gradient(180deg, #2e2e1a 0%, #4a3d2d 100%)',
+        background: 'linear-gradient(180deg, #4a4a3a 0%, #5a5040 100%)',
         accent: '#fff59d',
-        headerBg: '#1a1a0d'
+        headerBg: '#3a3a2a'
       },
       5: {  // May - Spring Bloom
         name: 'Spring Bloom',
-        background: 'linear-gradient(180deg, #1a2e1a 0%, #2d5a2d 100%)',
+        background: 'linear-gradient(180deg, #2a4a3a 0%, #3a6a4a 100%)',
         accent: '#aed581',
-        headerBg: '#0d1a0d'
+        headerBg: '#1a3a2a'
       },
       6: {  // June - Summer
         name: 'Summer',
-        background: 'linear-gradient(180deg, #2e2a1a 0%, #5a4a2d 100%)',
+        background: 'linear-gradient(180deg, #4a4538 0%, #6a5a40 100%)',
         accent: '#ffb74d',
-        headerBg: '#1a180d'
+        headerBg: '#3a3528'
       },
       7: {  // July - Beach
         name: 'Beach',
-        background: 'linear-gradient(180deg, #1a2a2e 0%, #2d4a5a 100%)',
+        background: 'linear-gradient(180deg, #2a4a5a 0%, #3a5a6a 100%)',
         accent: '#4dd0e1',
-        headerBg: '#0d181a'
+        headerBg: '#1a3a4a'
       },
       8: {  // August - Late Summer
         name: 'Late Summer',
-        background: 'linear-gradient(180deg, #2e2a1a 0%, #6a4a2d 100%)',
+        background: 'linear-gradient(180deg, #4a4538 0%, #7a5a40 100%)',
         accent: '#ffa726',
-        headerBg: '#1a180d'
+        headerBg: '#3a3528'
       },
       9: {  // September - Autumn Begins
         name: 'Autumn Begins',
-        background: 'linear-gradient(180deg, #2e1a1a 0%, #5a3d2d 100%)',
+        background: 'linear-gradient(180deg, #4a3a38 0%, #6a4a40 100%)',
         accent: '#ffab91',
-        headerBg: '#1a0d0d'
+        headerBg: '#3a2a28'
       },
       10: { // October - Halloween
         name: 'Halloween',
-        background: 'linear-gradient(180deg, #1a1a1a 0%, #2d2d2d 100%)',
+        background: 'linear-gradient(180deg, #3a3a3a 0%, #4a4a4a 100%)',
         accent: '#ff9800',
-        headerBg: '#0d0d0d'
+        headerBg: '#2a2a2a'
       },
       11: { // November - Autumn
         name: 'Autumn',
-        background: 'linear-gradient(180deg, #2e1a1a 0%, #4a2d2d 100%)',
+        background: 'linear-gradient(180deg, #4a3a38 0%, #5a4040 100%)',
         accent: '#bcaaa4',
-        headerBg: '#1a0d0d'
+        headerBg: '#3a2a28'
       },
       12: { // December - Christmas
         name: 'Christmas',
-        background: 'linear-gradient(180deg, #1a2e1a 0%, #2d1a1a 100%)',
+        background: 'linear-gradient(180deg, #2a4a3a 0%, #4a2a2a 100%)',
         accent: '#ef5350',
-        headerBg: '#0d1a0d'
+        headerBg: '#1a3a2a'
       }
     };
 

@@ -65,14 +65,29 @@ class WeekRenderer {
    * Format event time
    */
   formatEventTime(event) {
-    if (event.isAllDay) {
-      return 'Hele dagen';
-    }
-
     const start = new Date(event.start);
     return start.toLocaleTimeString('da-DK', {
       hour: '2-digit',
       minute: '2-digit'
+    });
+  }
+
+  /**
+   * Sort events: all-day first (alphabetically), then timed events (by time)
+   */
+  sortEvents(events) {
+    return events.slice().sort((a, b) => {
+      // All-day events come first
+      if (a.isAllDay && !b.isAllDay) return -1;
+      if (!a.isAllDay && b.isAllDay) return 1;
+
+      // Both all-day: sort alphabetically
+      if (a.isAllDay && b.isAllDay) {
+        return a.summary.localeCompare(b.summary, 'da');
+      }
+
+      // Both timed: sort by start time
+      return new Date(a.start) - new Date(b.start);
     });
   }
 
@@ -94,16 +109,21 @@ class WeekRenderer {
     const dayHeader = document.createElement('div');
     dayHeader.className = 'day-header';
 
-    const dayName = document.createElement('span');
-    dayName.className = 'day-name';
-    dayName.textContent = this.dayNames[date.getDay()];
-
     const dayNumber = document.createElement('span');
     dayNumber.className = 'day-number';
     dayNumber.textContent = date.getDate();
 
-    dayHeader.appendChild(dayName);
+    const daySeparator = document.createElement('span');
+    daySeparator.className = 'day-separator';
+    daySeparator.textContent = ' - ';
+
+    const dayName = document.createElement('span');
+    dayName.className = 'day-name';
+    dayName.textContent = this.dayNames[date.getDay()];
+
     dayHeader.appendChild(dayNumber);
+    dayHeader.appendChild(daySeparator);
+    dayHeader.appendChild(dayName);
     dayRow.appendChild(dayHeader);
 
     // Events container
@@ -111,7 +131,8 @@ class WeekRenderer {
     eventsContainer.className = 'events-container';
 
     if (events && events.length > 0) {
-      events.forEach(event => {
+      const sortedEvents = this.sortEvents(events);
+      sortedEvents.forEach(event => {
         const eventItem = document.createElement('div');
         eventItem.className = 'event-item';
         if (event.isAllDay) {
@@ -119,15 +140,18 @@ class WeekRenderer {
         }
         eventItem.style.borderColor = event.calendarColor;
 
-        const eventTime = document.createElement('span');
-        eventTime.className = 'event-time';
-        eventTime.textContent = this.formatEventTime(event);
+        // Only show time for timed events
+        if (!event.isAllDay) {
+          const eventTime = document.createElement('span');
+          eventTime.className = 'event-time';
+          eventTime.textContent = this.formatEventTime(event);
+          eventItem.appendChild(eventTime);
+        }
 
         const eventTitle = document.createElement('span');
         eventTitle.className = 'event-title';
         eventTitle.textContent = event.summary;
 
-        eventItem.appendChild(eventTime);
         eventItem.appendChild(eventTitle);
         eventsContainer.appendChild(eventItem);
       });

@@ -65,15 +65,6 @@ class TodoRenderer {
     title.textContent = task.title;
     content.appendChild(title);
 
-    // Due date if present
-    const dueText = this.formatDueDate(task.dueDate);
-    if (dueText) {
-      const due = document.createElement('div');
-      due.className = 'todo-due';
-      due.textContent = dueText;
-      content.appendChild(due);
-    }
-
     item.appendChild(checkbox);
     item.appendChild(content);
 
