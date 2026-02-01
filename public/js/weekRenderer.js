@@ -2,14 +2,16 @@
  * Week Renderer - Renders calendar weeks with events
  */
 class WeekRenderer {
-  constructor() {
+  constructor(mealRenderer) {
     this.week1Container = document.getElementById('week-1-days');
     this.week2Container = document.getElementById('week-2-days');
     this.week1NumberEl = document.getElementById('week-1-number');
     this.week2NumberEl = document.getElementById('week-2-number');
+    this.mealRenderer = mealRenderer || null;
+    this.lastCalendarData = null;
 
-    // Danish day names
-    this.dayNames = ['søndag', 'mandag', 'tirsdag', 'onsdag', 'torsdag', 'fredag', 'lørdag'];
+    // Danish day names (short form)
+    this.dayNames = ['søn', 'man', 'tir', 'ons', 'tor', 'fre', 'lør'];
   }
 
   /**
@@ -124,6 +126,13 @@ class WeekRenderer {
     dayHeader.appendChild(dayNumber);
     dayHeader.appendChild(daySeparator);
     dayHeader.appendChild(dayName);
+
+    // Add meal display if mealRenderer is available
+    if (this.mealRenderer) {
+      const mealElement = this.mealRenderer.createMealElement(this.formatDateKey(date));
+      dayHeader.appendChild(mealElement);
+    }
+
     dayRow.appendChild(dayHeader);
 
     // Events container
@@ -189,6 +198,9 @@ class WeekRenderer {
       return;
     }
 
+    // Store for refresh
+    this.lastCalendarData = data;
+
     const eventsByDate = data.eventsByDate || {};
 
     // Week 1 (current week)
@@ -206,6 +218,15 @@ class WeekRenderer {
     this.renderWeek(this.week2Container, week2.weekNumber, week2Dates, eventsByDate);
 
     console.log(`📅 Rendered weeks ${week1.weekNumber} and ${week2.weekNumber}`);
+  }
+
+  /**
+   * Refresh display with last data (for meal updates)
+   */
+  refresh() {
+    if (this.lastCalendarData) {
+      this.update(this.lastCalendarData);
+    }
   }
 
   /**

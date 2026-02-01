@@ -7,6 +7,7 @@ const calendarRouter = require('./routes/calendar');
 const todosRouter = require('./routes/todos');
 const webhookRouter = require('./routes/webhook');
 const simulateRouter = require('./routes/simulate');
+const mealsRouter = require('./routes/meals');
 const calendarService = require('./services/calendarService');
 const todoService = require('./services/todoService');
 
@@ -28,6 +29,7 @@ app.use('/api/calendar', calendarRouter);
 app.use('/api/todos', todosRouter);
 app.use('/api/webhook', webhookRouter);
 app.use('/api/simulate', simulateRouter);
+app.use('/api/meals', mealsRouter);
 
 // SSE endpoint for real-time updates
 app.get('/api/events-stream', (req, res) => {
@@ -119,6 +121,7 @@ app.listen(PORT, () => {
   console.log(`  - http://localhost:${PORT}/`);
   console.log(`  - http://localhost:${PORT}/api/calendar`);
   console.log(`  - http://localhost:${PORT}/api/todos`);
+  console.log(`  - http://localhost:${PORT}/api/meals`);
   console.log(`  - http://localhost:${PORT}/api/events-stream (SSE)`);
   console.log(`  - http://localhost:${PORT}/health`);
   console.log(`  - POST http://localhost:${PORT}/api/clear-cache`);

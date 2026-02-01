@@ -9,7 +9,8 @@
   // Initialize components
   const themeManager = new ThemeManager();
   const headerRenderer = new HeaderRenderer();
-  const weekRenderer = new WeekRenderer();
+  const mealRenderer = new MealRenderer();
+  const weekRenderer = new WeekRenderer(mealRenderer);
   const todoRenderer = new TodoRenderer();
 
   // Initialize update manager with callbacks
@@ -19,6 +20,10 @@
     },
     onTodoUpdate: (data) => {
       todoRenderer.update(data);
+    },
+    onMealUpdate: (data) => {
+      mealRenderer.update(data);
+      weekRenderer.refresh();
     }
   });
 
@@ -55,6 +60,7 @@
   window.weekplanner = {
     themeManager,
     headerRenderer,
+    mealRenderer,
     weekRenderer,
     todoRenderer,
     updateManager,

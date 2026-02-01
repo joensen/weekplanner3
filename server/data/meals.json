@@ -1,0 +1,221 @@
+{
+  "categories": {
+    "ris": {
+      "name": "Ris",
+      "meals": [
+        "Høstak",
+        "Karry og ris",
+        "Ris og B sovs",
+        "Risengrød",
+        "Stegt ris",
+        "Høstak"
+      ]
+    },
+    "kartofler": {
+      "name": "Kartofler",
+      "meals": [
+        "Nøddesteg",
+        "Bagte kartofler",
+        "Hawaii bøf",
+        "Millionbøf",
+        "Kartoffelmos",
+        "Pommes frites",
+        "Stuvet spinat"
+      ]
+    },
+    "pasta": {
+      "name": "Pasta",
+      "meals": [
+        "Lasagne",
+        "Pasta og spinat",
+        "Pasta i fad",
+        "Pasta tomatsovs",
+        "Suppehorn og æg",
+        "Pastasalat"
+      ]
+    },
+    "mexicansk": {
+      "name": "Mexicansk",
+      "meals": [
+        "Wraps",
+        "Tacos",
+        "Enchiladas",
+        "Chilli con carne",
+        "Quasadillas"
+      ]
+    },
+    "fastfood": {
+      "name": "Fast food",
+      "meals": [
+        "Burger",
+        "Havregrød",
+        "Majs kolber",
+        "Pita",
+        "Pizza",
+        "Pølsebrød"
+      ]
+    },
+    "suppe": {
+      "name": "Suppe",
+      "meals": [
+        "Tomatsuppe",
+        "Kartoffelsuppe"
+      ]
+    },
+    "andet": {
+      "name": "Andet",
+      "meals": [
+        "Brød",
+        "Frikedeller",
+        "Makaroni fisk",
+        "Omelet",
+        "Tarteletter",
+        "Tærte"
+      ]
+    }
+  },
+  "weekdayCategories": {
+    "0": "fastfood",
+    "1": "ris",
+    "2": "kartofler",
+    "3": "pasta",
+    "4": "suppe",
+    "5": "mexicansk",
+    "6": "andet"
+  },
+  "weeklySelections": {
+    "2026-W05": {
+      "2026-01-25": {
+        "meal": "Ris og B sovs",
+        "category": "ris"
+      },
+      "2026-01-26": {
+        "meal": "Pommes frites",
+        "category": "kartofler"
+      },
+      "2026-01-27": {
+        "meal": "Suppehorn og æg",
+        "category": "pasta"
+      },
+      "2026-01-28": {
+        "meal": "Kartoffelsuppe",
+        "category": "suppe"
+      },
+      "2026-01-29": {
+        "meal": "Wraps",
+        "category": "mexicansk"
+      },
+      "2026-01-30": {
+        "meal": "Tærte",
+        "category": "andet"
+      },
+      "2026-01-31": {
+        "meal": "Pita",
+        "category": "fastfood"
+      }
+    },
+    "2026-W06": {
+      "2026-02-01": {
+        "meal": "Stegt ris",
+        "category": "ris"
+      },
+      "2026-02-02": {
+        "meal": "Kartoffelmos",
+        "category": "kartofler"
+      },
+      "2026-02-03": {
+        "meal": "Pasta tomatsovs",
+        "category": "pasta"
+      },
+      "2026-02-04": {
+        "meal": "Tomatsuppe",
+        "category": "suppe"
+      },
+      "2026-02-05": {
+        "meal": "Tacos",
+        "category": "mexicansk"
+      },
+      "2026-02-06": {
+        "meal": "Omelet",
+        "category": "andet"
+      },
+      "2026-02-07": {
+        "meal": "Burger",
+        "category": "fastfood"
+      }
+    }
+  },
+  "history": [
+    {
+      "meal": "Ris og B sovs",
+      "date": "2026-01-25",
+      "category": "ris"
+    },
+    {
+      "meal": "Pommes frites",
+      "date": "2026-01-26",
+      "category": "kartofler"
+    },
+    {
+      "meal": "Suppehorn og æg",
+      "date": "2026-01-27",
+      "category": "pasta"
+    },
+    {
+      "meal": "Kartoffelsuppe",
+      "date": "2026-01-28",
+      "category": "suppe"
+    },
+    {
+      "meal": "Wraps",
+      "date": "2026-01-29",
+      "category": "mexicansk"
+    },
+    {
+      "meal": "Tærte",
+      "date": "2026-01-30",
+      "category": "andet"
+    },
+    {
+      "meal": "Pita",
+      "date": "2026-01-31",
+      "category": "fastfood"
+    },
+    {
+      "meal": "Stegt ris",
+      "date": "2026-02-01",
+      "category": "ris"
+    },
+    {
+      "meal": "Kartoffelmos",
+      "date": "2026-02-02",
+      "category": "kartofler"
+    },
+    {
+      "meal": "Pasta tomatsovs",
+      "date": "2026-02-03",
+      "category": "pasta"
+    },
+    {
+      "meal": "Tomatsuppe",
+      "date": "2026-02-04",
+      "category": "suppe"
+    },
+    {
+      "meal": "Tacos",
+      "date": "2026-02-05",
+      "category": "mexicansk"
+    },
+    {
+      "meal": "Omelet",
+      "date": "2026-02-06",
+      "category": "andet"
+    },
+    {
+      "meal": "Burger",
+      "date": "2026-02-07",
+      "category": "fastfood"
+    }
+  ],
+  "historyWeeks": 3
+}

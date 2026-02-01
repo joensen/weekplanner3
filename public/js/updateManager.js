@@ -5,6 +5,7 @@ class UpdateManager {
   constructor(options) {
     this.onCalendarUpdate = options.onCalendarUpdate || (() => {});
     this.onTodoUpdate = options.onTodoUpdate || (() => {});
+    this.onMealUpdate = options.onMealUpdate || (() => {});
 
     this.eventSource = null;
     this.pollInterval = null;
@@ -62,6 +63,10 @@ class UpdateManager {
           case 'todo-update':
             console.log('Todo update received, refreshing...');
             this.loadTodos();
+            break;
+          case 'meal-update':
+            console.log('Meal update received, refreshing...');
+            this.loadMeals();
             break;
           default:
             console.log('Unknown SSE event type:', data.type);
@@ -139,12 +144,28 @@ class UpdateManager {
   }
 
   /**
+   * Load meal data
+   */
+  async loadMeals() {
+    try {
+      const response = await fetch('/api/meals');
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+      const data = await response.json();
+      this.onMealUpdate(data);
+    } catch (error) {
+      console.error('Error loading meals:', error);
+    }
+  }
+
+  /**
    * Load all data
    */
   async loadAll() {
     await Promise.all([
       this.loadCalendar(),
-      this.loadTodos()
+      this.loadTodos(),
+      this.loadMeals()
     ]);
   }
 
