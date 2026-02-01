@@ -1,0 +1,331 @@
+/* CSS Variables for theming */
+:root {
+  /* Default theme (will be overridden by themeManager) */
+  --background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+  --accent: #4fc3f7;
+  --header-bg: #0d1b2a;
+
+  /* Fixed colors */
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.7);
+  --text-faded: rgba(255, 255, 255, 0.4);
+  --border-color: rgba(255, 255, 255, 0.1);
+  --today-bg: rgba(255, 255, 255, 0.08);
+  --today-border: var(--accent);
+}
+
+/* Reset and base styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--background);
+  color: var(--text-primary);
+  width: 1080px;
+  height: 1920px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header - ~100px */
+#header {
+  height: 100px;
+  background: var(--header-bg);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 40px;
+  border-bottom: 2px solid var(--border-color);
+  flex-shrink: 0;
+}
+
+#current-date {
+  font-size: 32px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+#current-time {
+  font-size: 48px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+/* Main Calendar Section - ~1420px */
+#calendar-section {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* Week columns */
+.week-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--border-color);
+  overflow: hidden;
+}
+
+.week-column:last-child {
+  border-right: none;
+}
+
+.week-header {
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid var(--border-color);
+  flex-shrink: 0;
+}
+
+.week-label {
+  font-size: 24px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.week-number {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.days-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Day rows */
+.day-row {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1px solid var(--border-color);
+  padding: 8px 12px;
+  min-height: 0;
+  overflow: hidden;
+  transition: opacity 0.3s ease;
+}
+
+.day-row:last-child {
+  border-bottom: none;
+}
+
+/* Past days are faded */
+.day-row.past {
+  opacity: 0.5;
+}
+
+.day-row.past .day-header {
+  font-size: 16px;
+}
+
+.day-row.past .event-item {
+  font-size: 14px;
+  padding: 2px 6px;
+}
+
+/* Today is highlighted */
+.day-row.today {
+  background: var(--today-bg);
+  border-left: 4px solid var(--today-border);
+  padding-left: 8px;
+}
+
+.day-row.today .day-header {
+  color: var(--accent);
+}
+
+/* Day header */
+.day-header {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 6px;
+  flex-shrink: 0;
+}
+
+.day-name {
+  font-size: 18px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.day-number {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+/* Events container */
+.events-container {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+/* Event items */
+.event-item {
+  display: flex;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: 4px;
+  border-left: 3px solid;
+  background: rgba(0, 0, 0, 0.2);
+  font-size: 16px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.event-time {
+  font-weight: 500;
+  margin-right: 8px;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.event-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.event-item.all-day {
+  font-style: italic;
+}
+
+.event-item.all-day .event-time {
+  color: var(--text-faded);
+}
+
+/* No events message */
+.no-events {
+  color: var(--text-faded);
+  font-style: italic;
+  font-size: 14px;
+  padding: 4px 0;
+}
+
+/* Todo Section - ~400px */
+#todo-section {
+  height: 400px;
+  background: rgba(0, 0, 0, 0.3);
+  border-top: 2px solid var(--border-color);
+  padding: 20px 30px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.todo-header {
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+#todo-container {
+  flex: 1;
+  display: flex;
+  gap: 30px;
+  overflow: hidden;
+}
+
+.todo-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow: hidden;
+}
+
+/* Todo items */
+.todo-item {
+  display: flex;
+  align-items: flex-start;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border-left: 4px solid;
+  background: rgba(255, 255, 255, 0.05);
+  font-size: 18px;
+}
+
+.todo-checkbox {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--text-secondary);
+  border-radius: 4px;
+  margin-right: 12px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.todo-content {
+  flex: 1;
+  overflow: hidden;
+}
+
+.todo-title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.todo-due {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+.todo-item.high-importance {
+  background: rgba(255, 100, 100, 0.1);
+}
+
+.todo-item.high-importance .todo-checkbox {
+  border-color: #ff6b6b;
+}
+
+/* Empty state */
+.no-todos {
+  color: var(--text-faded);
+  font-style: italic;
+  text-align: center;
+  padding: 20px;
+}
+
+/* Loading state */
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+}
+
+.loading::after {
+  content: '';
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--text-secondary);
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-left: 10px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

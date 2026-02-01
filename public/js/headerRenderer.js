@@ -1,0 +1,63 @@
+/**
+ * Header Renderer - Displays current date and time
+ */
+class HeaderRenderer {
+  constructor() {
+    this.dateEl = document.getElementById('current-date');
+    this.timeEl = document.getElementById('current-time');
+    this.intervalId = null;
+  }
+
+  /**
+   * Format date in Danish locale
+   */
+  formatDate(date) {
+    return date.toLocaleDateString('da-DK', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
+  }
+
+  /**
+   * Format time in 24-hour format
+   */
+  formatTime(date) {
+    return date.toLocaleTimeString('da-DK', {
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  }
+
+  /**
+   * Update the header display
+   */
+  update() {
+    const now = new Date();
+    this.dateEl.textContent = this.formatDate(now);
+    this.timeEl.textContent = this.formatTime(now);
+  }
+
+  /**
+   * Start the header renderer (updates every second)
+   */
+  start() {
+    this.update();
+    this.intervalId = setInterval(() => this.update(), 1000);
+    console.log('⏰ Header renderer started');
+  }
+
+  /**
+   * Stop the header renderer
+   */
+  stop() {
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
+      this.intervalId = null;
+    }
+  }
+}
+
+// Export for use in app.js
+window.HeaderRenderer = HeaderRenderer;
