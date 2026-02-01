@@ -85,7 +85,9 @@ class ThemeManager {
    * Apply theme for the current month
    */
   applyCurrentTheme() {
-    const month = new Date().getMonth() + 1; // 1-12
+    const urlParams = new URLSearchParams(window.location.search);
+    const simulatedMonth = parseInt(urlParams.get('month'), 10);
+    const month = (simulatedMonth >= 1 && simulatedMonth <= 12) ? simulatedMonth : new Date().getMonth() + 1;
 
     // Only update if month changed
     if (month === this.currentMonth) return;

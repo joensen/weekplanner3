@@ -72,31 +72,6 @@ class MockDataService {
         'Skolefri'
       ]
     };
-
-    // Sample todo items
-    this.todoTemplates = [
-      { title: 'Køb mælk og brød', list: 'Indkøb', importance: 'normal' },
-      { title: 'Hent pakke på posthuset', list: 'Gøremål', importance: 'high' },
-      { title: 'Ring til tandlægen', list: 'Gøremål', importance: 'high' },
-      { title: 'Vask bilen', list: 'Gøremål', importance: 'normal' },
-      { title: 'Bestil flyrejse', list: 'Familie', importance: 'normal' },
-      { title: 'Køb fødselsdagsgave til Anders', list: 'Indkøb', importance: 'high' },
-      { title: 'Reparer cykelpunktering', list: 'Gøremål', importance: 'normal' },
-      { title: 'Aflevér bøger på biblioteket', list: 'Gøremål', importance: 'low' },
-      { title: 'Bestil tid hos frisør', list: 'Gøremål', importance: 'normal' },
-      { title: 'Køb gave til jubilæum', list: 'Indkøb', importance: 'normal' },
-      { title: 'Ryd op i garage', list: 'Hjemme', importance: 'low' },
-      { title: 'Skift olie i bil', list: 'Gøremål', importance: 'normal' },
-      { title: 'Planlæg sommerferie', list: 'Familie', importance: 'normal' },
-      { title: 'Køb ny seng til gæsteværelse', list: 'Indkøb', importance: 'low' }
-    ];
-
-    this.todoListColors = {
-      'Indkøb': '#FF5733',
-      'Gøremål': '#33FF57',
-      'Familie': '#3357FF',
-      'Hjemme': '#FF33F5'
-    };
   }
 
   /**
@@ -227,61 +202,6 @@ class MockDataService {
         }
       ],
       today: now.toISOString().split('T')[0],
-      lastUpdated: new Date().toISOString(),
-      isMockData: true
-    };
-  }
-
-  /**
-   * Generate mock todo items
-   */
-  generateTodoData() {
-    const now = new Date();
-
-    // Select random subset of todos (6-10 items)
-    const numTodos = Math.floor(Math.random() * 5) + 6;
-    const shuffled = [...this.todoTemplates].sort(() => Math.random() - 0.5);
-    const selectedTodos = shuffled.slice(0, numTodos);
-
-    const tasks = selectedTodos.map((todo, index) => {
-      // Random due date (some past, some future, some none)
-      let dueDate = null;
-      const dueDateChance = Math.random();
-      if (dueDateChance < 0.7) {
-        const daysOffset = Math.floor(Math.random() * 14) - 3; // -3 to +10 days
-        const dueDateTime = new Date(now);
-        dueDateTime.setDate(dueDateTime.getDate() + daysOffset);
-        dueDate = dueDateTime.toISOString().split('T')[0];
-      }
-
-      return {
-        id: `mock-todo-${index}`,
-        title: todo.title,
-        dueDate: dueDate,
-        importance: todo.importance,
-        listId: `list-${todo.list}`,
-        listName: todo.list,
-        listColor: this.todoListColors[todo.list] || '#666666'
-      };
-    });
-
-    // Sort: high importance first, then by due date
-    tasks.sort((a, b) => {
-      const importanceOrder = { high: 0, normal: 1, low: 2 };
-      const impA = importanceOrder[a.importance] || 1;
-      const impB = importanceOrder[b.importance] || 1;
-      if (impA !== impB) return impA - impB;
-
-      if (a.dueDate && !b.dueDate) return -1;
-      if (!a.dueDate && b.dueDate) return 1;
-      if (a.dueDate && b.dueDate) {
-        return a.dueDate.localeCompare(b.dueDate);
-      }
-      return 0;
-    });
-
-    return {
-      tasks: tasks,
       lastUpdated: new Date().toISOString(),
       isMockData: true
     };

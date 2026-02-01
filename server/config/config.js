@@ -39,17 +39,9 @@ module.exports = {
     }
   ].filter(cal => cal.id), // Only include calendars with configured IDs
 
-  // Microsoft Todo list to display
-  todoList: {
-    id: process.env.TODO_LIST_ID,
-    name: 'Tasks',
-    color: '#4fc3f7'
-  },
-
   // Cache settings
   cache: {
-    calendarTTL: 540000, // 9 minutes in ms
-    todoTTL: 300000      // 5 minutes in ms
+    calendarTTL: 540000 // 9 minutes in ms
   },
 
   // Push notification settings

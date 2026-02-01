@@ -10,8 +10,8 @@ class WeekRenderer {
     this.mealRenderer = mealRenderer || null;
     this.lastCalendarData = null;
 
-    // Danish day names (short form)
-    this.dayNames = ['søn', 'man', 'tir', 'ons', 'tor', 'fre', 'lør'];
+    // Danish day names (full form)
+    this.dayNames = ['søndag', 'mandag', 'tirsdag', 'onsdag', 'torsdag', 'fredag', 'lørdag'];
   }
 
   /**

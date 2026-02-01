@@ -4,7 +4,6 @@
  *
  * Usage:
  *   node scripts/simulate-push.js calendar    # Simulate calendar push
- *   node scripts/simulate-push.js todo        # Simulate todo push
  *   node scripts/simulate-push.js all         # Refresh all data
  *   node scripts/simulate-push.js status      # Check simulation status
  */
@@ -15,19 +14,6 @@ async function simulateCalendarPush() {
   console.log('📅 Simulating calendar push notification...');
   try {
     const response = await fetch(`${BASE_URL}/api/simulate/calendar-push`, {
-      method: 'POST'
-    });
-    const data = await response.json();
-    console.log('✅', data.message);
-  } catch (error) {
-    console.error('❌ Error:', error.message);
-  }
-}
-
-async function simulateTodoPush() {
-  console.log('📋 Simulating todo push notification...');
-  try {
-    const response = await fetch(`${BASE_URL}/api/simulate/todo-push`, {
       method: 'POST'
     });
     const data = await response.json();
@@ -68,9 +54,6 @@ switch (command) {
   case 'calendar':
     simulateCalendarPush();
     break;
-  case 'todo':
-    simulateTodoPush();
-    break;
   case 'all':
     refreshAll();
     break;
@@ -86,7 +69,6 @@ Usage:
 
 Commands:
   calendar   Simulate a Google Calendar push notification
-  todo       Simulate a Microsoft Todo push notification
   all        Regenerate all mock data and notify clients
   status     Check simulation status
 

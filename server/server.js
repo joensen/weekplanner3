@@ -4,12 +4,10 @@ const cors = require('cors');
 const path = require('path');
 
 const calendarRouter = require('./routes/calendar');
-const todosRouter = require('./routes/todos');
 const webhookRouter = require('./routes/webhook');
 const simulateRouter = require('./routes/simulate');
 const mealsRouter = require('./routes/meals');
 const calendarService = require('./services/calendarService');
-const todoService = require('./services/todoService');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -26,7 +24,6 @@ app.use(express.static(path.join(__dirname, '../public')));
 
 // API routes
 app.use('/api/calendar', calendarRouter);
-app.use('/api/todos', todosRouter);
 app.use('/api/webhook', webhookRouter);
 app.use('/api/simulate', simulateRouter);
 app.use('/api/meals', mealsRouter);
@@ -78,9 +75,6 @@ app.get('/health', (req, res) => {
 app.post('/api/clear-cache', (_req, res) => {
   try {
     calendarService.cache.flushAll();
-    if (todoService.cache) {
-      todoService.cache.flushAll();
-    }
 
     console.log('Cache cleared manually');
     res.json({
@@ -120,7 +114,6 @@ app.listen(PORT, () => {
   console.log(`Endpoints:`);
   console.log(`  - http://localhost:${PORT}/`);
   console.log(`  - http://localhost:${PORT}/api/calendar`);
-  console.log(`  - http://localhost:${PORT}/api/todos`);
   console.log(`  - http://localhost:${PORT}/api/meals`);
   console.log(`  - http://localhost:${PORT}/api/events-stream (SSE)`);
   console.log(`  - http://localhost:${PORT}/health`);
@@ -130,7 +123,6 @@ app.listen(PORT, () => {
     console.log(`=================================`);
     console.log(`Simulation Endpoints (mock mode only):`);
     console.log(`  - POST http://localhost:${PORT}/api/simulate/calendar-push`);
-    console.log(`  - POST http://localhost:${PORT}/api/simulate/todo-push`);
     console.log(`  - POST http://localhost:${PORT}/api/simulate/refresh-all`);
     console.log(`  - GET  http://localhost:${PORT}/api/simulate/status`);
   }

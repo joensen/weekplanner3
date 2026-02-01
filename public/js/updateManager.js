@@ -4,7 +4,6 @@
 class UpdateManager {
   constructor(options) {
     this.onCalendarUpdate = options.onCalendarUpdate || (() => {});
-    this.onTodoUpdate = options.onTodoUpdate || (() => {});
     this.onMealUpdate = options.onMealUpdate || (() => {});
 
     this.eventSource = null;
@@ -59,10 +58,6 @@ class UpdateManager {
           case 'calendar-update':
             console.log('Calendar update received, refreshing...');
             this.loadCalendar();
-            break;
-          case 'todo-update':
-            console.log('Todo update received, refreshing...');
-            this.loadTodos();
             break;
           case 'meal-update':
             console.log('Meal update received, refreshing...');
@@ -129,21 +124,6 @@ class UpdateManager {
   }
 
   /**
-   * Load todo data
-   */
-  async loadTodos() {
-    try {
-      const response = await fetch('/api/todos');
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-
-      const data = await response.json();
-      this.onTodoUpdate(data);
-    } catch (error) {
-      console.error('Error loading todos:', error);
-    }
-  }
-
-  /**
    * Load meal data
    */
   async loadMeals() {
@@ -164,7 +144,6 @@ class UpdateManager {
   async loadAll() {
     await Promise.all([
       this.loadCalendar(),
-      this.loadTodos(),
       this.loadMeals()
     ]);
   }

@@ -139,6 +139,7 @@ class MealRenderer {
     });
 
     container.appendChild(dropdown);
+    container.closest('.day-row')?.classList.add('dropdown-active');
     this.activeDropdown = dropdown;
 
     // Position dropdown to stay within viewport
@@ -170,6 +171,7 @@ class MealRenderer {
    */
   hideDropdown() {
     if (this.activeDropdown) {
+      this.activeDropdown.closest('.day-row')?.classList.remove('dropdown-active');
       this.activeDropdown.remove();
       this.activeDropdown = null;
     }

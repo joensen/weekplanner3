@@ -1,6 +1,6 @@
 /**
  * Weekplanner3 - Main Application
- * Family dashboard for Google Calendar and Microsoft Todo
+ * Family dashboard for Google Calendar
  */
 
 (function() {
@@ -11,15 +11,11 @@
   const headerRenderer = new HeaderRenderer();
   const mealRenderer = new MealRenderer();
   const weekRenderer = new WeekRenderer(mealRenderer);
-  const todoRenderer = new TodoRenderer();
 
   // Initialize update manager with callbacks
   const updateManager = new UpdateManager({
     onCalendarUpdate: (data) => {
       weekRenderer.update(data);
-    },
-    onTodoUpdate: (data) => {
-      todoRenderer.update(data);
     },
     onMealUpdate: (data) => {
       mealRenderer.update(data);
@@ -41,7 +37,6 @@
 
     // Show loading states
     weekRenderer.showLoading();
-    todoRenderer.showLoading();
 
     // Start update manager (loads data and connects to SSE)
     updateManager.start();
@@ -62,7 +57,6 @@
     headerRenderer,
     mealRenderer,
     weekRenderer,
-    todoRenderer,
     updateManager,
     refresh: () => updateManager.loadAll()
   };

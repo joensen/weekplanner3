@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const calendarService = require('../services/calendarService');
-const todoService = require('../services/todoService');
 
 // POST /api/webhook/calendar - Google Calendar push notification receiver
 router.post('/calendar', (req, res) => {
@@ -39,50 +38,6 @@ router.post('/calendar', (req, res) => {
     res.status(200).send();
   } catch (error) {
     console.error('Error processing calendar webhook:', error);
-    res.status(500).send();
-  }
-});
-
-// POST /api/webhook/todo - Azure Event Grid (Microsoft Todo) webhook receiver
-router.post('/todo', (req, res) => {
-  try {
-    // Handle Event Grid subscription validation
-    if (req.headers['aeg-event-type'] === 'SubscriptionValidation') {
-      const validationEvent = req.body[0];
-      if (validationEvent && validationEvent.data && validationEvent.data.validationCode) {
-        console.log('📋 Todo webhook validation request received');
-        return res.json({
-          validationResponse: validationEvent.data.validationCode
-        });
-      }
-    }
-
-    // Handle CloudEvents from Event Grid
-    const events = Array.isArray(req.body) ? req.body : [req.body];
-
-    events.forEach(event => {
-      const eventType = event.type || event.eventType;
-      console.log(`📋 Todo webhook received: ${eventType}`);
-
-      if (eventType.includes('ToDo')) {
-        console.log('   → Todo changed, invalidating cache');
-
-        // Invalidate todo cache
-        if (todoService.cache) {
-          todoService.cache.flushAll();
-        }
-
-        // Broadcast update to connected SSE clients
-        const broadcastUpdate = req.app.locals.broadcastUpdate;
-        if (broadcastUpdate) {
-          broadcastUpdate('todo-update');
-        }
-      }
-    });
-
-    res.status(200).send();
-  } catch (error) {
-    console.error('Error processing todo webhook:', error);
     res.status(500).send();
   }
 });

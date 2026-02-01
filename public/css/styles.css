@@ -125,14 +125,6 @@ body {
   opacity: 0.5;
 }
 
-.day-row.past .day-header {
-  font-size: 16px;
-}
-
-.day-row.past .event-item {
-  font-size: 18px;
-  padding: 4px 8px;
-}
 
 /* Today is highlighted */
 .day-row.today {
@@ -171,7 +163,7 @@ body {
 }
 
 .day-number {
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 700;
 }
 
@@ -193,13 +185,18 @@ body {
   background: rgba(255, 180, 100, 0.1);
 }
 
+.day-row.dropdown-active {
+  z-index: 100;
+  position: relative;
+}
+
 .meal-icon {
   font-size: 24px;
   line-height: 1;
 }
 
 .meal-text {
-  font-size: 18px;
+  font-size: 24px;
   font-weight: 500;
   color: rgba(255, 200, 140, 0.9);
   cursor: pointer;
@@ -229,7 +226,7 @@ body {
   top: 100%;
   right: 0;
   margin-top: 4px;
-  background: rgba(30, 30, 40, 0.98);
+  background: rgb(30, 30, 40);
   border: 1px solid var(--border-color);
   border-radius: 8px;
   padding: 8px 0;
@@ -268,7 +265,7 @@ body {
 .event-item {
   display: flex;
   align-items: center;
-  padding: 6px 12px;
+  padding: 4px 8px;
   border-radius: 4px;
   border-left: 4px solid;
   background: rgba(0, 0, 0, 0.2);
@@ -301,96 +298,8 @@ body {
 .no-events {
   color: var(--text-faded);
   font-style: italic;
-  font-size: 18px;
+  font-size: 24px;
   padding: 4px 0;
-}
-
-/* Todo Section - ~400px */
-#todo-section {
-  height: 400px;
-  background: rgba(0, 0, 0, 0.3);
-  border-top: 2px solid var(--border-color);
-  padding: 20px 30px;
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-}
-
-.todo-header {
-  font-size: 28px;
-  font-weight: 600;
-  margin-bottom: 16px;
-  color: var(--accent);
-  flex-shrink: 0;
-}
-
-#todo-container {
-  flex: 1;
-  display: flex;
-  gap: 30px;
-  overflow: hidden;
-}
-
-.todo-column {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  overflow: hidden;
-}
-
-/* Todo items */
-.todo-item {
-  display: flex;
-  align-items: flex-start;
-  padding: 10px 14px;
-  border-radius: 8px;
-  border-left: 4px solid;
-  background: rgba(255, 255, 255, 0.05);
-  font-size: 18px;
-}
-
-.todo-checkbox {
-  width: 20px;
-  height: 20px;
-  border: 2px solid var(--text-secondary);
-  border-radius: 4px;
-  margin-right: 12px;
-  flex-shrink: 0;
-  margin-top: 2px;
-}
-
-.todo-content {
-  flex: 1;
-  overflow: hidden;
-}
-
-.todo-title {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.todo-due {
-  font-size: 14px;
-  color: var(--text-secondary);
-  margin-top: 4px;
-}
-
-.todo-item.high-importance {
-  background: rgba(255, 100, 100, 0.1);
-}
-
-.todo-item.high-importance .todo-checkbox {
-  border-color: #ff6b6b;
-}
-
-/* Empty state */
-.no-todos {
-  color: var(--text-faded);
-  font-style: italic;
-  text-align: center;
-  padding: 20px;
 }
 
 /* Loading state */

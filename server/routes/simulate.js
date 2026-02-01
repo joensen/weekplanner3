@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const calendarService = require('../services/calendarService');
-const todoService = require('../services/todoService');
 
 /**
  * Simulation routes for testing UI without real integrations
@@ -40,40 +39,17 @@ router.post('/calendar-push', (req, res) => {
   });
 });
 
-// POST /api/simulate/todo-push - Simulate a todo push notification
-router.post('/todo-push', (req, res) => {
-  console.log('🔔 Simulating todo push notification...');
-
-  // Clear todo cache to force regeneration
-  todoService.cache.flushAll();
-
-  // Broadcast update to SSE clients
-  const broadcastUpdate = req.app.locals.broadcastUpdate;
-  if (broadcastUpdate) {
-    broadcastUpdate('todo-update');
-    console.log('✅ Todo update broadcasted to clients');
-  }
-
-  res.json({
-    success: true,
-    message: 'Todo push notification simulated',
-    timestamp: new Date().toISOString()
-  });
-});
-
 // POST /api/simulate/refresh-all - Regenerate all mock data
 router.post('/refresh-all', (req, res) => {
   console.log('🔄 Regenerating all mock data...');
 
   // Clear all caches
   calendarService.cache.flushAll();
-  todoService.cache.flushAll();
 
   // Broadcast updates
   const broadcastUpdate = req.app.locals.broadcastUpdate;
   if (broadcastUpdate) {
     broadcastUpdate('calendar-update');
-    broadcastUpdate('todo-update');
     console.log('✅ Updates broadcasted to clients');
   }
 
@@ -89,7 +65,6 @@ router.get('/status', (req, res) => {
   res.json({
     mockMode: true,
     calendarCached: calendarService.cache.has('all_events'),
-    todoCached: todoService.cache.has('all_tasks'),
     timestamp: new Date().toISOString()
   });
 });

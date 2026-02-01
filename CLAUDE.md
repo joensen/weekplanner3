@@ -1,7 +1,7 @@
 # Weekplanner3 - Developer Guide
 
 ## Overview
-Family dashboard displaying Google Calendar events and Microsoft Todo tasks on a portrait TV (1080x1920).
+Family dashboard displaying Google Calendar events on a portrait TV (1080x1920).
 
 ## Quick Start
 ```bash
@@ -24,9 +24,9 @@ npm start
 weekplanner3/
 ├── server/
 │   ├── server.js           # Express entry point with SSE
-│   ├── config/config.js    # Calendars, todo lists, themes
+│   ├── config/config.js    # Calendars, themes
 │   ├── routes/             # API endpoints
-│   └── services/           # Google Calendar & MS Todo
+│   └── services/           # Google Calendar
 ├── public/
 │   ├── index.html          # Main page
 │   ├── css/styles.css      # Portrait layout styles
@@ -36,19 +36,12 @@ weekplanner3/
 
 ## Key Endpoints
 - `GET /api/calendar` - Merged calendar events for 2 weeks
-- `GET /api/todos` - Incomplete Microsoft Todo tasks
 - `GET /api/events-stream` - SSE for real-time updates
 - `POST /api/webhook/calendar` - Google Calendar push notifications
-- `POST /api/webhook/todo` - Azure Event Grid for Todo
 
 ## Adding Calendars
 1. Get calendar ID from Google Calendar settings
 2. Add to `.env`: `CALENDAR_ID_X=calendar_id_here`
-3. Configure in `server/config/config.js` with color and name
-
-## Adding Todo Lists
-1. Get list ID from Microsoft Graph API
-2. Add to `.env`: `TODO_LIST_ID_X=list_id_here`
 3. Configure in `server/config/config.js` with color and name
 
 ## Push Notifications Setup
