@@ -8,7 +8,7 @@ set -e
 APP_NAME="weekplanner3"
 APP_DIR="/home/pi/weekplanner3"
 REPO_URL="https://github.com/joensen/weekplanner3.git"
-NODE_VERSION="18"
+NODE_VERSION="22"
 
 # Colors for output
 RED='\033[0;31m'
