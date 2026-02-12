@@ -55,7 +55,19 @@ class CalendarService {
     const d = new Date(date);
     const day = d.getDay();
     const diff = d.getDate() - day + (day === 0 ? -6 : 1); // Adjust for Monday start
-    return new Date(d.setDate(diff));
+    d.setDate(diff);
+    d.setHours(12, 0, 0, 0); // Set to noon to avoid timezone issues
+    return d;
+  }
+
+  /**
+   * Format date as YYYY-MM-DD using local time (not UTC)
+   */
+  formatDateLocal(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
   }
 
   /**
@@ -191,6 +203,9 @@ class CalendarService {
       const currentWeekNumber = this.getWeekNumber(now);
       const nextWeekNumber = currentWeekNumber === 52 ? 1 : currentWeekNumber + 1;
 
+      const nextWeekStart = new Date(currentWeekStart);
+      nextWeekStart.setDate(nextWeekStart.getDate() + 7);
+
       const result = {
         events: allEvents,
         eventsByDate: eventsByDate,
@@ -198,17 +213,17 @@ class CalendarService {
           {
             weekNumber: currentWeekNumber,
             year: now.getFullYear(),
-            startDate: currentWeekStart.toISOString().split('T')[0],
+            startDate: this.formatDateLocal(currentWeekStart),
             isCurrent: true
           },
           {
             weekNumber: nextWeekNumber,
             year: nextWeekNumber === 1 ? now.getFullYear() + 1 : now.getFullYear(),
-            startDate: new Date(currentWeekStart.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+            startDate: this.formatDateLocal(nextWeekStart),
             isCurrent: false
           }
         ],
-        today: now.toISOString().split('T')[0],
+        today: this.formatDateLocal(now),
         lastUpdated: new Date().toISOString()
       };
 

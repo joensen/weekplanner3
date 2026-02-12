@@ -38,10 +38,21 @@ class WeekRenderer {
   }
 
   /**
-   * Format a date as YYYY-MM-DD
+   * Format a date as YYYY-MM-DD (local time)
    */
   formatDateKey(date) {
-    return date.toISOString().split('T')[0];
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  /**
+   * Parse a YYYY-MM-DD string as local date (not UTC)
+   */
+  parseLocalDate(dateStr) {
+    const [year, month, day] = dateStr.split('-').map(Number);
+    return new Date(year, month - 1, day, 12, 0, 0); // Noon to avoid timezone issues
   }
 
   /**
@@ -208,14 +219,14 @@ class WeekRenderer {
     // Week 1 (current week)
     const week1 = data.weeks[0];
     this.week1NumberEl.textContent = week1.weekNumber;
-    const week1Start = new Date(week1.startDate);
+    const week1Start = this.parseLocalDate(week1.startDate);
     const week1Dates = this.getWeekDates(week1Start);
     this.renderWeek(this.week1Container, week1.weekNumber, week1Dates, eventsByDate);
 
     // Week 2 (next week)
     const week2 = data.weeks[1];
     this.week2NumberEl.textContent = week2.weekNumber;
-    const week2Start = new Date(week2.startDate);
+    const week2Start = this.parseLocalDate(week2.startDate);
     const week2Dates = this.getWeekDates(week2Start);
     this.renderWeek(this.week2Container, week2.weekNumber, week2Dates, eventsByDate);
 
