@@ -101,8 +101,10 @@ app.use((err, req, res, next) => {
 });
 
 // Start server
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   const mockMode = process.env.MOCK_MODE === 'true';
+  const pushEnabled = process.env.PUSH_ENABLED === 'true';
+  const webhookUrl = process.env.WEBHOOK_URL;
 
   console.log(`=================================`);
   console.log(`Weekplanner3 Server Started`);
@@ -110,6 +112,7 @@ app.listen(PORT, () => {
   console.log(`Port: ${PORT}`);
   console.log(`Time: ${new Date().toLocaleString('da-DK')}`);
   console.log(`Mode: ${mockMode ? '🎭 MOCK MODE (simulated data)' : '🌐 LIVE MODE'}`);
+  console.log(`Push: ${pushEnabled ? '✓ Enabled' : '✗ Disabled'}`);
   console.log(`=================================`);
   console.log(`Endpoints:`);
   console.log(`  - http://localhost:${PORT}/`);
@@ -128,4 +131,33 @@ app.listen(PORT, () => {
   }
 
   console.log(`=================================`);
+
+  // Set up Google Calendar push notifications
+  if (!mockMode && pushEnabled && webhookUrl) {
+    console.log(`\nSetting up Google Calendar push notifications...`);
+    console.log(`Webhook URL: ${webhookUrl}`);
+
+    try {
+      const channels = await calendarService.setupAllWatchChannels(webhookUrl);
+      if (channels.length > 0) {
+        console.log(`✓ Watch channels created for ${channels.length} calendar(s)`);
+
+        // Store channels for potential cleanup
+        app.locals.watchChannels = channels;
+
+        // Set up renewal before expiration (channels expire after ~7 days)
+        const renewalInterval = 6 * 24 * 60 * 60 * 1000; // 6 days
+        setInterval(async () => {
+          console.log('Renewing watch channels...');
+          const newChannels = await calendarService.setupAllWatchChannels(webhookUrl);
+          app.locals.watchChannels = newChannels;
+          console.log(`✓ Watch channels renewed for ${newChannels.length} calendar(s)`);
+        }, renewalInterval);
+      } else {
+        console.log('✗ No watch channels were created');
+      }
+    } catch (error) {
+      console.error('✗ Error setting up push notifications:', error.message);
+    }
+  }
 });

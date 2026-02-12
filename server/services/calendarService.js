@@ -90,18 +90,26 @@ class CalendarService {
       }
 
       // Add calendar metadata to each event
-      return events.map(event => ({
-        id: event.id,
-        summary: event.summary || 'Ingen titel',
-        description: event.description || '',
-        start: event.start.dateTime || event.start.date,
-        end: event.end.dateTime || event.end.date,
-        isAllDay: !event.start.dateTime,
-        calendarId: calendarConfig.id,
-        calendarColor: calendarConfig.color,
-        calendarName: calendarConfig.name,
-        location: event.location || ''
-      }));
+      return events
+        .filter(event => {
+          // Filter out Bibelstudiegruppe events
+          if (event.summary?.includes('Bibelstudiegruppe')) {
+            return false;
+          }
+          return true;
+        })
+        .map(event => ({
+          id: event.id,
+          summary: event.summary || 'Ingen titel',
+          description: event.description || '',
+          start: event.start.dateTime || event.start.date,
+          end: event.end.dateTime || event.end.date,
+          isAllDay: !event.start.dateTime,
+          calendarId: calendarConfig.id,
+          calendarColor: calendarConfig.color,
+          calendarName: calendarConfig.name,
+          location: event.location || ''
+        }));
     } catch (error) {
       console.error(`✗ Error fetching calendar ${calendarConfig.name}:`, error.message);
       if (error.code === 404) {
@@ -294,7 +302,9 @@ class CalendarService {
       return null;
     }
 
-    const channelId = `weekplanner-${calendarId}-${Date.now()}`;
+    // Generate a valid channel ID (only alphanumeric, dash, underscore, plus, slash, equals)
+    const calendarHash = Buffer.from(calendarId).toString('base64').replace(/[^A-Za-z0-9\-_+/=]/g, '');
+    const channelId = `wp-${calendarHash.substring(0, 20)}-${Date.now()}`;
 
     try {
       const response = await this.calendar.events.watch({

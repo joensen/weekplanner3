@@ -159,7 +159,9 @@ class WeekRenderer {
 
         const eventTitle = document.createElement('span');
         eventTitle.className = 'event-title';
-        eventTitle.textContent = event.summary;
+        // Add star emoji for Danish holidays
+        const prefix = event.calendarName === 'Helligdage' ? '⭐ ' : '';
+        eventTitle.textContent = prefix + event.summary;
 
         eventItem.appendChild(eventTitle);
         eventsContainer.appendChild(eventItem);
