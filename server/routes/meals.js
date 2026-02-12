@@ -29,7 +29,7 @@ router.get('/', (req, res) => {
 router.put('/:date', (req, res) => {
   try {
     const { date } = req.params;
-    const { meal } = req.body;
+    const { meal, category } = req.body;
 
     if (!meal) {
       return res.status(400).json({
@@ -44,7 +44,7 @@ router.put('/:date', (req, res) => {
       });
     }
 
-    const result = mealService.changeMeal(date, meal);
+    const result = mealService.changeMeal(date, meal, category);
 
     // Broadcast update to all SSE clients
     if (req.app.locals.broadcastUpdate) {

@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Madplan</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #1a1a2e;
+      color: #fff;
+      min-height: 100vh;
+      padding: 16px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    header h1 {
+      font-size: 24px;
+      font-weight: 600;
+    }
+
+    .week-section {
+      margin-bottom: 24px;
+    }
+
+    .week-header {
+      font-size: 18px;
+      font-weight: 600;
+      color: #4fc3f7;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #333;
+    }
+
+    .day-card {
+      background: #252540;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+
+    .day-card.today {
+      border: 2px solid #4fc3f7;
+    }
+
+    .day-card.past {
+      opacity: 0.5;
+    }
+
+    .day-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .day-name {
+      font-weight: 600;
+      font-size: 16px;
+    }
+
+    .day-date {
+      color: #888;
+      font-size: 14px;
+    }
+
+    .meal-select-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .meal-emoji {
+      font-size: 28px;
+    }
+
+    .meal-select {
+      flex: 1;
+      background: #1a1a2e;
+      color: #fff;
+      border: 1px solid #444;
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 16px;
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23888' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+    }
+
+    .meal-select:focus {
+      outline: none;
+      border-color: #4fc3f7;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #888;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #4fc3f7;
+      color: #000;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: 500;
+      opacity: 0;
+      transition: opacity 0.3s;
+      z-index: 1000;
+    }
+
+    .toast.show {
+      opacity: 1;
+    }
+
+    .status-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: #252540;
+      padding: 8px 16px;
+      font-size: 12px;
+      color: #888;
+      display: flex;
+      justify-content: space-between;
+      z-index: 100;
+    }
+
+    .status-bar .connected {
+      color: #4caf50;
+    }
+
+    .status-bar .disconnected {
+      color: #f44336;
+    }
+
+    body {
+      padding-top: 50px;
+    }
+  </style>
+</head>
+<body>
+  <div class="status-bar">
+    <span>Madplan</span>
+    <span id="connection-status" class="disconnected">Forbinder...</span>
+  </div>
+
+  <header>
+    <h1>Madplan</h1>
+  </header>
+
+  <main id="meals-container">
+    <div class="loading">Indlæser...</div>
+  </main>
+
+  <div id="toast" class="toast"></div>
+
+  <script>
+    const dayNames = ['Søndag', 'Mandag', 'Tirsdag', 'Onsdag', 'Torsdag', 'Fredag', 'Lørdag'];
+
+    const categoryEmojis = {
+      'ris': '\u{1F35A}',
+      'kartofler': '\u{1F954}',
+      'pasta': '\u{1F35D}',
+      'mexicansk': '\u{1F32E}',
+      'fastfood': '\u{1F35F}',
+      'suppe': '\u{1F372}',
+      'andet': '\u{1F37D}'
+    };
+
+    let mealsData = null;
+    let eventSource = null;
+
+    // Format date as YYYY-MM-DD
+    function formatDateKey(date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+
+    // Format date for display
+    function formatDateDisplay(date) {
+      return `${date.getDate()}/${date.getMonth() + 1}`;
+    }
+
+    // Check if date is today
+    function isToday(date) {
+      const today = new Date();
+      return date.toDateString() === today.toDateString();
+    }
+
+    // Check if date is in the past
+    function isPast(date) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const checkDate = new Date(date);
+      checkDate.setHours(0, 0, 0, 0);
+      return checkDate < today;
+    }
+
+    // Get week start (Monday)
+    function getWeekStart(date) {
+      const d = new Date(date);
+      const day = d.getDay();
+      const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+      return new Date(d.setDate(diff));
+    }
+
+    // Get week number
+    function getWeekNumber(date) {
+      const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+      const dayNum = d.getUTCDay() || 7;
+      d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+      const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+      return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+    }
+
+    // Show toast notification
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2000);
+    }
+
+    // Update connection status
+    function setConnectionStatus(connected) {
+      const status = document.getElementById('connection-status');
+      if (connected) {
+        status.textContent = 'Forbundet';
+        status.className = 'connected';
+      } else {
+        status.textContent = 'Afbrudt';
+        status.className = 'disconnected';
+      }
+    }
+
+    // Create day card HTML
+    function createDayCard(date, mealInfo) {
+      const dateKey = formatDateKey(date);
+      const dayName = dayNames[date.getDay()];
+      const categoryId = mealInfo?.category || 'andet';
+      const currentMeal = mealInfo?.meal || '';
+      const emoji = categoryEmojis[categoryId] || '\u{1F37D}';
+
+      let classes = 'day-card';
+      if (isToday(date)) classes += ' today';
+      if (isPast(date)) classes += ' past';
+
+      // Build options grouped by category
+      let optionsHtml = '';
+      const categories = mealsData?.categories || {};
+
+      for (const [catId, category] of Object.entries(categories)) {
+        const catEmoji = categoryEmojis[catId] || '';
+        optionsHtml += `<optgroup label="${catEmoji} ${category.name}">`;
+        for (const meal of (category.meals || [])) {
+          const selected = meal === currentMeal ? 'selected' : '';
+          optionsHtml += `<option value="${meal}" data-category="${catId}" ${selected}>${meal}</option>`;
+        }
+        optionsHtml += '</optgroup>';
+      }
+
+      return `
+        <div class="${classes}" data-date="${dateKey}">
+          <div class="day-header">
+            <span class="day-name">${dayName}</span>
+            <span class="day-date">${formatDateDisplay(date)}</span>
+          </div>
+          <div class="meal-select-container">
+            <span class="meal-emoji" id="emoji-${dateKey}">${emoji}</span>
+            <select class="meal-select" data-date="${dateKey}">
+              ${optionsHtml}
+            </select>
+          </div>
+        </div>
+      `;
+    }
+
+    // Render meals
+    function renderMeals() {
+      if (!mealsData) return;
+
+      const container = document.getElementById('meals-container');
+      const now = new Date();
+      const currentWeekStart = getWeekStart(now);
+      const nextWeekStart = new Date(currentWeekStart);
+      nextWeekStart.setDate(nextWeekStart.getDate() + 7);
+
+      let html = '';
+
+      // Current week
+      html += `<div class="week-section">`;
+      html += `<div class="week-header">Uge ${getWeekNumber(currentWeekStart)}</div>`;
+      for (let i = 0; i < 7; i++) {
+        const date = new Date(currentWeekStart);
+        date.setDate(date.getDate() + i);
+        const dateKey = formatDateKey(date);
+        const mealInfo = mealsData.meals?.[dateKey];
+        html += createDayCard(date, mealInfo);
+      }
+      html += `</div>`;
+
+      // Next week
+      html += `<div class="week-section">`;
+      html += `<div class="week-header">Uge ${getWeekNumber(nextWeekStart)}</div>`;
+      for (let i = 0; i < 7; i++) {
+        const date = new Date(nextWeekStart);
+        date.setDate(date.getDate() + i);
+        const dateKey = formatDateKey(date);
+        const mealInfo = mealsData.meals?.[dateKey];
+        html += createDayCard(date, mealInfo);
+      }
+      html += `</div>`;
+
+      container.innerHTML = html;
+
+      // Add event listeners to selects
+      container.querySelectorAll('.meal-select').forEach(select => {
+        select.addEventListener('change', handleMealChange);
+      });
+    }
+
+    // Handle meal selection change
+    async function handleMealChange(e) {
+      const select = e.target;
+      const dateKey = select.dataset.date;
+      const newMeal = select.value;
+      const selectedOption = select.options[select.selectedIndex];
+      const category = selectedOption.dataset.category;
+
+      // Update emoji immediately
+      const emojiEl = document.getElementById(`emoji-${dateKey}`);
+      if (emojiEl && category) {
+        emojiEl.textContent = categoryEmojis[category] || '\u{1F37D}';
+      }
+
+      try {
+        const response = await fetch(`/api/meals/${dateKey}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ meal: newMeal, category: category })
+        });
+
+        if (!response.ok) throw new Error('Failed to update');
+
+        showToast('Gemt!');
+      } catch (error) {
+        console.error('Error updating meal:', error);
+        showToast('Fejl ved opdatering');
+        // Reload to get correct state
+        loadMeals();
+      }
+    }
+
+    // Load meals from API
+    async function loadMeals() {
+      try {
+        const response = await fetch('/api/meals');
+        mealsData = await response.json();
+        renderMeals();
+      } catch (error) {
+        console.error('Error loading meals:', error);
+        document.getElementById('meals-container').innerHTML =
+          '<div class="loading">Fejl ved indlæsning</div>';
+      }
+    }
+
+    // Connect to SSE for real-time updates
+    function connectSSE() {
+      eventSource = new EventSource('/api/events-stream');
+
+      eventSource.onopen = () => {
+        setConnectionStatus(true);
+      };
+
+      eventSource.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        if (data.type === 'meal-update') {
+          loadMeals();
+        }
+      };
+
+      eventSource.onerror = () => {
+        setConnectionStatus(false);
+        eventSource.close();
+        // Reconnect after 5 seconds
+        setTimeout(connectSSE, 5000);
+      };
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      loadMeals();
+      connectSSE();
+    });
+  </script>
+</body>
+</html>

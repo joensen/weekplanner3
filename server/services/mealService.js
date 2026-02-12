@@ -277,9 +277,21 @@ class MealService {
   }
 
   /**
+   * Find category for a meal
+   */
+  findCategoryForMeal(meal) {
+    for (const [categoryId, category] of Object.entries(this.data.categories)) {
+      if (category.meals && category.meals.includes(meal)) {
+        return categoryId;
+      }
+    }
+    return 'andet';
+  }
+
+  /**
    * Change meal for a specific date
    */
-  changeMeal(dateStr, newMeal) {
+  changeMeal(dateStr, newMeal, categoryId = null) {
     this.loadData();
 
     // Find which week this date belongs to
@@ -290,8 +302,10 @@ class MealService {
       this.data.weeklySelections[weekKey] = {};
     }
 
-    const dayOfWeek = date.getDay();
-    const categoryId = this.getCategoryForWeekday(dayOfWeek);
+    // Use provided category, or find it from the meal, or fall back to weekday category
+    if (!categoryId) {
+      categoryId = this.findCategoryForMeal(newMeal);
+    }
 
     // Update selection
     this.data.weeklySelections[weekKey][dateStr] = {
