@@ -84,43 +84,13 @@
     "6": "andet"
   },
   "weeklySelections": {
-    "2026-W05": {
-      "2026-01-26": {
-        "meal": "Høstak",
-        "category": "ris"
-      },
-      "2026-01-27": {
-        "meal": "Bagte kartofler",
-        "category": "kartofler"
-      },
-      "2026-01-28": {
-        "meal": "Pasta i fad",
-        "category": "pasta"
-      },
-      "2026-01-29": {
-        "meal": "Tomatsuppe",
-        "category": "suppe"
-      },
-      "2026-01-30": {
-        "meal": "Chilli con carne",
-        "category": "mexicansk"
-      },
-      "2026-01-31": {
-        "meal": "Brød",
-        "category": "andet"
-      },
-      "2026-02-01": {
-        "meal": "Pizza",
-        "category": "fastfood"
-      }
-    },
     "2026-W06": {
       "2026-02-02": {
-        "meal": "Høstak",
+        "meal": "Ris og B sovs",
         "category": "ris"
       },
       "2026-02-03": {
-        "meal": "Stuvet spinat",
+        "meal": "Nøddesteg",
         "category": "kartofler"
       },
       "2026-02-04": {
@@ -143,11 +113,71 @@
         "meal": "Majs kolber",
         "category": "fastfood"
       }
+    },
+    "2026-W07": {
+      "2026-02-09": {
+        "meal": "Stegt ris",
+        "category": "ris"
+      },
+      "2026-02-10": {
+        "meal": "Millionbøf",
+        "category": "kartofler"
+      },
+      "2026-02-11": {
+        "meal": "Pasta i fad",
+        "category": "pasta"
+      },
+      "2026-02-12": {
+        "meal": "Kartoffelsuppe",
+        "category": "suppe"
+      },
+      "2026-02-13": {
+        "meal": "Tacos",
+        "category": "mexicansk"
+      },
+      "2026-02-14": {
+        "meal": "Makaroni fisk",
+        "category": "andet"
+      },
+      "2026-02-15": {
+        "meal": "Pølsebrød",
+        "category": "fastfood"
+      }
+    },
+    "2026-W08": {
+      "2026-02-16": {
+        "meal": "Høstak",
+        "category": "ris"
+      },
+      "2026-02-17": {
+        "meal": "Pommes frites",
+        "category": "kartofler"
+      },
+      "2026-02-18": {
+        "meal": "Lasagne",
+        "category": "pasta"
+      },
+      "2026-02-19": {
+        "meal": "Kartoffelsuppe",
+        "category": "suppe"
+      },
+      "2026-02-20": {
+        "meal": "Enchiladas",
+        "category": "mexicansk"
+      },
+      "2026-02-21": {
+        "meal": "Frikedeller",
+        "category": "andet"
+      },
+      "2026-02-22": {
+        "meal": "Pizza",
+        "category": "fastfood"
+      }
     }
   },
   "history": [
     {
-      "meal": "Høstak",
+      "meal": "Ris og B sovs",
       "date": "2026-01-26",
       "category": "ris"
     },
@@ -157,7 +187,7 @@
       "category": "kartofler"
     },
     {
-      "meal": "Pasta i fad",
+      "meal": "Pastasalat",
       "date": "2026-01-28",
       "category": "pasta"
     },
@@ -177,17 +207,17 @@
       "category": "andet"
     },
     {
-      "meal": "Pizza",
+      "meal": "Pita",
       "date": "2026-02-01",
       "category": "fastfood"
     },
     {
-      "meal": "Høstak",
+      "meal": "Ris og B sovs",
       "date": "2026-02-02",
       "category": "ris"
     },
     {
-      "meal": "Stuvet spinat",
+      "meal": "Nøddesteg",
       "date": "2026-02-03",
       "category": "kartofler"
     },
@@ -214,6 +244,76 @@
     {
       "meal": "Majs kolber",
       "date": "2026-02-08",
+      "category": "fastfood"
+    },
+    {
+      "meal": "Stegt ris",
+      "date": "2026-02-09",
+      "category": "ris"
+    },
+    {
+      "meal": "Millionbøf",
+      "date": "2026-02-10",
+      "category": "kartofler"
+    },
+    {
+      "meal": "Pasta i fad",
+      "date": "2026-02-11",
+      "category": "pasta"
+    },
+    {
+      "meal": "Kartoffelsuppe",
+      "date": "2026-02-12",
+      "category": "suppe"
+    },
+    {
+      "meal": "Tacos",
+      "date": "2026-02-13",
+      "category": "mexicansk"
+    },
+    {
+      "meal": "Makaroni fisk",
+      "date": "2026-02-14",
+      "category": "andet"
+    },
+    {
+      "meal": "Pølsebrød",
+      "date": "2026-02-15",
+      "category": "fastfood"
+    },
+    {
+      "meal": "Høstak",
+      "date": "2026-02-16",
+      "category": "ris"
+    },
+    {
+      "meal": "Pommes frites",
+      "date": "2026-02-17",
+      "category": "kartofler"
+    },
+    {
+      "meal": "Lasagne",
+      "date": "2026-02-18",
+      "category": "pasta"
+    },
+    {
+      "meal": "Kartoffelsuppe",
+      "date": "2026-02-19",
+      "category": "suppe"
+    },
+    {
+      "meal": "Enchiladas",
+      "date": "2026-02-20",
+      "category": "mexicansk"
+    },
+    {
+      "meal": "Frikedeller",
+      "date": "2026-02-21",
+      "category": "andet"
+    },
+    {
+      "meal": "Pizza",
+      "date": "2026-02-22",
       "category": "fastfood"
     }
   ],

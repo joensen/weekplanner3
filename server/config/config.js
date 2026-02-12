@@ -5,37 +5,42 @@ module.exports = {
     {
       id: process.env.CALENDAR_ID_1,
       color: '#33B679',
-      name: 'Family'
+      name: 'Vores'
     },
     {
       id: process.env.CALENDAR_ID_2,
       color: '#D50000',
-      name: 'Work'
+      name: 'Fødselsdag'
     },
     {
       id: process.env.CALENDAR_ID_3,
       color: '#039BE5',
-      name: 'School'
+      name: 'Gudstjeneste'
     },
     {
       id: process.env.CALENDAR_ID_4,
       color: '#7986CB',
-      name: 'Sports'
+      name: 'Aktiviteter'
     },
     {
       id: process.env.CALENDAR_ID_5,
       color: '#8E24AA',
-      name: 'Activities'
+      name: 'Spejder'
     },
     {
       id: process.env.CALENDAR_ID_6,
       color: '#616161',
-      name: 'Birthdays'
+      name: 'Interne møder'
     },
     {
       id: process.env.CALENDAR_ID_7,
       color: '#EF6C00',
-      name: 'Holidays'
+      name: 'Foredrag'
+    },
+    {
+      id: process.env.CALENDAR_ID_8,
+      color: '#4285F4',
+      name: 'Helligdage'
     }
   ].filter(cal => cal.id), // Only include calendars with configured IDs
 

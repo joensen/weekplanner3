@@ -9,6 +9,7 @@ const cache = new NodeCache({ stdTTL: config.cache.calendarTTL / 1000 });
 class CalendarService {
   constructor() {
     this.calendar = null;
+    this.oauth2Client = null;
     this.initialized = false;
     this.cache = cache;
     this.mockMode = process.env.MOCK_MODE === 'true';
@@ -24,19 +25,27 @@ class CalendarService {
       return;
     }
 
-    const apiKey = process.env.GOOGLE_API_KEY;
-    if (!apiKey) {
-      console.error('GOOGLE_API_KEY not found in environment variables');
+    const clientId = process.env.GOOGLE_CLIENT_ID;
+    const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+    const refreshToken = process.env.GOOGLE_REFRESH_TOKEN;
+
+    if (!clientId || !clientSecret || !refreshToken) {
+      console.error('Google OAuth credentials not found in environment variables');
+      console.log('💡 Required: GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REFRESH_TOKEN');
       console.log('💡 Tip: Set MOCK_MODE=true in .env to use simulated data');
       return;
     }
 
+    // Set up OAuth2 client
+    this.oauth2Client = new google.auth.OAuth2(clientId, clientSecret);
+    this.oauth2Client.setCredentials({ refresh_token: refreshToken });
+
     this.calendar = google.calendar({
       version: 'v3',
-      auth: apiKey
+      auth: this.oauth2Client
     });
     this.initialized = true;
-    console.log('Calendar service initialized');
+    console.log('✓ Calendar service initialized with OAuth');
   }
 
   /**
@@ -272,6 +281,86 @@ class CalendarService {
     }
 
     return { events: [], lastUpdated: data.lastUpdated };
+  }
+
+  /**
+   * Set up a watch channel for push notifications on a calendar
+   */
+  async setupWatchChannel(calendarId, webhookUrl) {
+    this.initialize();
+
+    if (!this.initialized || this.mockMode) {
+      console.log('Cannot setup watch channel: service not initialized or in mock mode');
+      return null;
+    }
+
+    const channelId = `weekplanner-${calendarId}-${Date.now()}`;
+
+    try {
+      const response = await this.calendar.events.watch({
+        calendarId: calendarId,
+        requestBody: {
+          id: channelId,
+          type: 'web_hook',
+          address: webhookUrl
+        }
+      });
+
+      console.log(`✓ Watch channel created for ${calendarId}`);
+      console.log(`  Channel ID: ${response.data.id}`);
+      console.log(`  Resource ID: ${response.data.resourceId}`);
+      console.log(`  Expiration: ${new Date(parseInt(response.data.expiration)).toISOString()}`);
+
+      return {
+        channelId: response.data.id,
+        resourceId: response.data.resourceId,
+        expiration: response.data.expiration
+      };
+    } catch (error) {
+      console.error(`✗ Error setting up watch channel for ${calendarId}:`, error.message);
+      return null;
+    }
+  }
+
+  /**
+   * Stop a watch channel
+   */
+  async stopWatchChannel(channelId, resourceId) {
+    this.initialize();
+
+    if (!this.initialized || this.mockMode) {
+      return false;
+    }
+
+    try {
+      await this.calendar.channels.stop({
+        requestBody: {
+          id: channelId,
+          resourceId: resourceId
+        }
+      });
+      console.log(`✓ Watch channel ${channelId} stopped`);
+      return true;
+    } catch (error) {
+      console.error(`✗ Error stopping watch channel:`, error.message);
+      return false;
+    }
+  }
+
+  /**
+   * Set up watch channels for all configured calendars
+   */
+  async setupAllWatchChannels(webhookUrl) {
+    const channels = [];
+
+    for (const cal of config.calendars) {
+      const channel = await this.setupWatchChannel(cal.id, webhookUrl);
+      if (channel) {
+        channels.push({ calendarId: cal.id, ...channel });
+      }
+    }
+
+    return channels;
   }
 }
 
