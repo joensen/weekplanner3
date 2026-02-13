@@ -23,6 +23,8 @@
   --today-number-text: #000;
   --dropdown-hover: rgba(79, 195, 247, 0.2);
   --dropdown-shadow: rgba(0, 0, 0, 0.4);
+  --stick-color: #ffffff;
+  --stick-box-bg: rgba(255, 255, 255, 0.1);
 }
 
 /* Reset and base styles */
@@ -100,7 +102,7 @@ body {
 
 .week-label {
   font-size: 24px;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--text-secondary);
 }
 
@@ -169,7 +171,7 @@ body {
 
 .day-name {
   font-size: 24px;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: capitalize;
 }
 
@@ -281,13 +283,14 @@ body {
   border-left: 4px solid;
   background: var(--overlay-dark);
   font-size: 22px;
+  font-weight: 500;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .event-time {
-  font-weight: 500;
+  font-weight: 600;
   margin-right: 12px;
   color: var(--text-secondary);
   flex-shrink: 0;

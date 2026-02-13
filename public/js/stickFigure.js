@@ -82,7 +82,7 @@ class StickFigureWalker {
       .stick-person .head {
         width: 18px;
         height: 18px;
-        border: 3px solid #fff;
+        border: 3px solid var(--stick-color);
         border-radius: 50%;
         position: absolute;
         top: 0;
@@ -93,7 +93,7 @@ class StickFigureWalker {
       .stick-person .body {
         width: 3px;
         height: 28px;
-        background: #fff;
+        background: var(--stick-color);
         position: absolute;
         top: 21px;
         left: 50%;
@@ -104,7 +104,7 @@ class StickFigureWalker {
       .stick-person .arm-right {
         width: 3px;
         height: 22px;
-        background: #fff;
+        background: var(--stick-color);
         position: absolute;
         top: 24px;
         transform-origin: top center;
@@ -117,7 +117,7 @@ class StickFigureWalker {
       .stick-person .leg-right {
         width: 3px;
         height: 28px;
-        background: #fff;
+        background: var(--stick-color);
         position: absolute;
         top: 48px;
         transform-origin: top center;
@@ -129,7 +129,7 @@ class StickFigureWalker {
       /* Props */
       .prop {
         position: absolute;
-        background: #fff;
+        background: var(--stick-color);
       }
 
       .broom {
@@ -152,15 +152,15 @@ class StickFigureWalker {
       .box {
         width: 40px;
         height: 40px;
-        border: 3px solid #fff;
-        background: rgba(255,255,255,0.1);
+        border: 3px solid var(--stick-color);
+        background: var(--stick-box-bg);
         margin-right: -10px;
       }
 
       .gun {
         width: 25px;
         height: 8px;
-        background: #fff;
+        background: var(--stick-color);
         position: absolute;
       }
 
@@ -371,7 +371,7 @@ class StickFigureWalker {
       .ninja-sword {
         width: 35px;
         height: 4px;
-        background: linear-gradient(to right, #666, #fff);
+        background: linear-gradient(to right, #888, var(--stick-color));
         position: absolute;
         top: 25px;
         left: 30px;

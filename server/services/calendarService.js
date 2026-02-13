@@ -104,11 +104,8 @@ class CalendarService {
       // Add calendar metadata to each event
       return events
         .filter(event => {
-          // Filter out Bibelstudiegruppe events
-          if (event.summary?.includes('Bibelstudiegruppe')) {
-            return false;
-          }
-          return true;
+          const excludeWords = calendarConfig.excludeWords || [];
+          return !excludeWords.some(word => event.summary?.includes(word));
         })
         .map(event => ({
           id: event.id,

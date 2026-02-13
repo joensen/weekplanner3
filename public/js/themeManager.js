@@ -81,79 +81,79 @@ class ThemeManager {
       }
     };
 
-    // Light themes (daytime) - near-white with subtle seasonal tint
+    // Light themes (daytime) - white background, seasonal accent in header
     this.lightThemes = {
       1: {  // January - Winter
         name: 'Winter',
-        background: 'linear-gradient(180deg, #f0f5fc 0%, #e8f0fa 100%)',
-        accent: '#1976d2',
-        headerBg: '#dce8f5'
+        background: '#ffffff',
+        accent: '#1565c0',
+        headerBg: '#e3f2fd'
       },
       2: {  // February - Late Winter
         name: 'Late Winter',
-        background: 'linear-gradient(180deg, #f2f4fa 0%, #eaefF7 100%)',
-        accent: '#1e88e5',
-        headerBg: '#dde4f2'
+        background: '#ffffff',
+        accent: '#1565c0',
+        headerBg: '#e3f2fd'
       },
       3: {  // March - Spring
         name: 'Spring',
-        background: 'linear-gradient(180deg, #f0f8f2 0%, #e8f5ea 100%)',
+        background: '#ffffff',
         accent: '#2e7d32',
-        headerBg: '#d8f0dc'
+        headerBg: '#e8f5e9'
       },
       4: {  // April - Easter
         name: 'Easter',
-        background: 'linear-gradient(180deg, #fcfaf0 0%, #faf6e8 100%)',
-        accent: '#f9a825',
-        headerBg: '#f5f0d8'
+        background: '#ffffff',
+        accent: '#e65100',
+        headerBg: '#fff8e1'
       },
       5: {  // May - Spring Bloom
         name: 'Spring Bloom',
-        background: 'linear-gradient(180deg, #f2faf0 0%, #eaf7e6 100%)',
-        accent: '#558b2f',
-        headerBg: '#daf0d4'
+        background: '#ffffff',
+        accent: '#33691e',
+        headerBg: '#f1f8e9'
       },
       6: {  // June - Summer
         name: 'Summer',
-        background: 'linear-gradient(180deg, #fffcf0 0%, #fef8e8 100%)',
-        accent: '#ef6c00',
-        headerBg: '#fcf2d8'
+        background: '#ffffff',
+        accent: '#e65100',
+        headerBg: '#fff3e0'
       },
       7: {  // July - Beach
         name: 'Beach',
-        background: 'linear-gradient(180deg, #f0fafC 0%, #e8f6fa 100%)',
-        accent: '#00838f',
-        headerBg: '#d8f0f5'
+        background: '#ffffff',
+        accent: '#00695c',
+        headerBg: '#e0f7fa'
       },
       8: {  // August - Late Summer
         name: 'Late Summer',
-        background: 'linear-gradient(180deg, #fffaf0 0%, #fef5e6 100%)',
+        background: '#ffffff',
         accent: '#e65100',
-        headerBg: '#fcf0d5'
+        headerBg: '#fff3e0'
       },
       9: {  // September - Autumn Begins
         name: 'Autumn Begins',
-        background: 'linear-gradient(180deg, #fCf4f0 0%, #faf0ec 100%)',
+        background: '#ffffff',
         accent: '#bf360c',
-        headerBg: '#f5e6de'
+        headerBg: '#fbe9e7'
       },
       10: { // October - Halloween
         name: 'Halloween',
-        background: 'linear-gradient(180deg, #faf8f2 0%, #f8f4ec 100%)',
+        background: '#ffffff',
         accent: '#e65100',
-        headerBg: '#f2ece0'
+        headerBg: '#fff3e0'
       },
       11: { // November - Autumn
         name: 'Autumn',
-        background: 'linear-gradient(180deg, #faf6f2 0%, #f6f0ec 100%)',
-        accent: '#795548',
-        headerBg: '#f0e6de'
+        background: '#ffffff',
+        accent: '#4e342e',
+        headerBg: '#efebe9'
       },
       12: { // December - Christmas
         name: 'Christmas',
-        background: 'linear-gradient(180deg, #f2faf2 0%, #faf2f2 100%)',
-        accent: '#c62828',
-        headerBg: '#e4f0e4'
+        background: '#ffffff',
+        accent: '#b71c1c',
+        headerBg: '#e8f5e9'
       }
     };
 
@@ -190,9 +190,11 @@ class ThemeManager {
       root.style.setProperty('--today-number-text', '#000');
       root.style.setProperty('--dropdown-hover', 'rgba(79, 195, 247, 0.2)');
       root.style.setProperty('--dropdown-shadow', 'rgba(0, 0, 0, 0.4)');
+      root.style.setProperty('--stick-color', '#ffffff');
+      root.style.setProperty('--stick-box-bg', 'rgba(255, 255, 255, 0.1)');
     } else {
-      root.style.setProperty('--text-primary', '#1a1a1a');
-      root.style.setProperty('--text-secondary', 'rgba(0, 0, 0, 0.6)');
+      root.style.setProperty('--text-primary', '#000000');
+      root.style.setProperty('--text-secondary', 'rgba(0, 0, 0, 0.65)');
       root.style.setProperty('--text-faded', 'rgba(0, 0, 0, 0.35)');
       root.style.setProperty('--border-color', 'rgba(0, 0, 0, 0.1)');
       root.style.setProperty('--overlay-dark', 'rgba(0, 0, 0, 0.05)');
@@ -206,6 +208,8 @@ class ThemeManager {
       root.style.setProperty('--today-number-text', '#ffffff');
       root.style.setProperty('--dropdown-hover', 'rgba(25, 118, 210, 0.1)');
       root.style.setProperty('--dropdown-shadow', 'rgba(0, 0, 0, 0.15)');
+      root.style.setProperty('--stick-color', '#000000');
+      root.style.setProperty('--stick-box-bg', 'rgba(0, 0, 0, 0.08)');
     }
   }
 

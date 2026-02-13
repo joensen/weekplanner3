@@ -30,7 +30,8 @@ module.exports = {
     {
       id: process.env.CALENDAR_ID_6,
       color: '#616161',
-      name: 'Interne møder'
+      name: 'Interne møder',
+      excludeWords: ['Bibelstudiegruppe', 'Bedegruppen']
     },
     {
       id: process.env.CALENDAR_ID_7,
