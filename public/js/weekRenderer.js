@@ -175,6 +175,18 @@ class WeekRenderer {
         eventTitle.textContent = prefix + event.summary;
 
         eventItem.appendChild(eventTitle);
+
+        // Birthday age toast
+        if (event.calendarName === 'Fødselsdag') {
+          const age = this.calcBirthdayAge(event, date);
+          if (age !== null) {
+            const toast = document.createElement('span');
+            toast.className = 'birthday-age-toast';
+            toast.textContent = `${age} år`;
+            eventItem.appendChild(toast);
+          }
+        }
+
         eventsContainer.appendChild(eventItem);
       });
     } else {
@@ -186,6 +198,19 @@ class WeekRenderer {
 
     dayRow.appendChild(eventsContainer);
     return dayRow;
+  }
+
+  /**
+   * Extract birth year from a birthday event and calculate age
+   */
+  calcBirthdayAge(event, eventDate) {
+    // Look for a 4-digit year (1900-2099) in summary or description
+    const text = (event.summary || '') + ' ' + (event.description || '');
+    const match = text.match(/\b(19\d{2}|20\d{2})\b/);
+    if (!match) return null;
+    const birthYear = parseInt(match[1], 10);
+    const age = eventDate.getFullYear() - birthYear;
+    return age > 0 && age < 150 ? age : null;
   }
 
   /**

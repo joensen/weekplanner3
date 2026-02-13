@@ -308,6 +308,19 @@ body {
   color: var(--text-faded);
 }
 
+/* Birthday age toast */
+.birthday-age-toast {
+  margin-left: auto;
+  flex-shrink: 0;
+  font-size: 16px;
+  font-weight: 600;
+  padding: 2px 10px;
+  border-radius: 12px;
+  background: rgba(213, 0, 0, 0.3);
+  color: #ffffff;
+  white-space: nowrap;
+}
+
 /* No events message */
 .no-events {
   color: var(--text-faded);
