@@ -160,14 +160,6 @@ class WeekRenderer {
         }
         eventItem.style.borderColor = event.calendarColor;
 
-        // Only show time for timed events
-        if (!event.isAllDay) {
-          const eventTime = document.createElement('span');
-          eventTime.className = 'event-time';
-          eventTime.textContent = this.formatEventTime(event);
-          eventItem.appendChild(eventTime);
-        }
-
         const eventTitle = document.createElement('span');
         eventTitle.className = 'event-title';
         // Add star emoji for Danish holidays
@@ -175,6 +167,14 @@ class WeekRenderer {
         eventTitle.textContent = prefix + event.summary;
 
         eventItem.appendChild(eventTitle);
+
+        // Show time as right-aligned toast for timed events
+        if (!event.isAllDay) {
+          const eventTime = document.createElement('span');
+          eventTime.className = 'event-time';
+          eventTime.textContent = this.formatEventTime(event);
+          eventItem.appendChild(eventTime);
+        }
 
         // Birthday age toast
         if (event.calendarName === 'Fødselsdag') {

@@ -289,10 +289,15 @@ body {
 }
 
 .event-time {
-  font-weight: 600;
-  margin-right: 12px;
-  color: var(--text-secondary);
+  margin-left: auto;
   flex-shrink: 0;
+  font-size: 16px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: rgb(40, 60, 100);
+  color: #ffffff;
+  white-space: nowrap;
 }
 
 .event-title {
@@ -301,10 +306,6 @@ body {
 }
 
 .event-item.all-day {
-}
-
-.event-item.all-day .event-time {
-  color: var(--text-faded);
 }
 
 /* Birthday age toast */
