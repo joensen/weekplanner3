@@ -7,14 +7,23 @@ const path = require('path');
 class MealService {
   constructor() {
     this.dataPath = path.join(__dirname, '../data/meals.json');
+    this.defaultDataPath = path.join(__dirname, '../data/meals-default.json');
     this.data = null;
   }
 
   /**
-   * Load data from JSON file
+   * Load data from JSON file.
+   * If meals.json doesn't exist, copy from meals-default.json first.
    */
   loadData() {
     try {
+      if (!fs.existsSync(this.dataPath)) {
+        // Copy seed data on first run
+        if (fs.existsSync(this.defaultDataPath)) {
+          fs.copyFileSync(this.defaultDataPath, this.dataPath);
+          console.log('Created meals.json from meals-default.json');
+        }
+      }
       const content = fs.readFileSync(this.dataPath, 'utf8');
       this.data = JSON.parse(content);
     } catch (error) {
@@ -205,7 +214,6 @@ class MealService {
    */
   pruneOldSelections() {
     const now = new Date();
-    const currentWeekKey = this.getWeekKey(now);
 
     // Calculate week keys to keep
     const keysToKeep = new Set();
@@ -324,6 +332,184 @@ class MealService {
       meal: newMeal,
       category: categoryId
     };
+  }
+
+  // ─── CRUD Methods for Admin ──────────────────────────────────────
+
+  /**
+   * Get all data for admin display
+   */
+  getAllData() {
+    this.loadData();
+    return {
+      categories: this.data.categories,
+      weekdayCategories: this.data.weekdayCategories
+    };
+  }
+
+  /**
+   * Add a new category
+   */
+  addCategory(id, name) {
+    this.loadData();
+
+    if (this.data.categories[id]) {
+      throw new Error(`Kategori '${id}' findes allerede`);
+    }
+
+    this.data.categories[id] = { name, meals: [] };
+    this.saveData();
+    return this.data.categories[id];
+  }
+
+  /**
+   * Rename a category
+   */
+  renameCategory(id, newName) {
+    this.loadData();
+
+    if (!this.data.categories[id]) {
+      throw new Error(`Kategori '${id}' blev ikke fundet`);
+    }
+
+    this.data.categories[id].name = newName;
+    this.saveData();
+    return this.data.categories[id];
+  }
+
+  /**
+   * Delete a category (prevent if assigned to a weekday)
+   */
+  deleteCategory(id) {
+    this.loadData();
+
+    if (!this.data.categories[id]) {
+      throw new Error(`Kategori '${id}' blev ikke fundet`);
+    }
+
+    // Check if assigned to any weekday
+    const assignedDays = Object.entries(this.data.weekdayCategories)
+      .filter(([, catId]) => catId === id)
+      .map(([day]) => day);
+
+    if (assignedDays.length > 0) {
+      throw new Error(`Kategorien er tildelt ugedage og kan ikke slettes`);
+    }
+
+    delete this.data.categories[id];
+    this.saveData();
+  }
+
+  /**
+   * Add a meal to a category
+   */
+  addMeal(categoryId, mealName) {
+    this.loadData();
+
+    const category = this.data.categories[categoryId];
+    if (!category) {
+      throw new Error(`Kategori '${categoryId}' blev ikke fundet`);
+    }
+
+    if (category.meals.includes(mealName)) {
+      throw new Error(`'${mealName}' findes allerede i denne kategori`);
+    }
+
+    category.meals.push(mealName);
+    this.saveData();
+    return category;
+  }
+
+  /**
+   * Rename a meal within a category. Also updates weekly selections and history.
+   */
+  renameMeal(categoryId, oldName, newName) {
+    this.loadData();
+
+    const category = this.data.categories[categoryId];
+    if (!category) {
+      throw new Error(`Kategori '${categoryId}' blev ikke fundet`);
+    }
+
+    const index = category.meals.indexOf(oldName);
+    if (index === -1) {
+      throw new Error(`'${oldName}' blev ikke fundet i kategorien`);
+    }
+
+    if (category.meals.includes(newName)) {
+      throw new Error(`'${newName}' findes allerede i denne kategori`);
+    }
+
+    // Update in category
+    category.meals[index] = newName;
+
+    // Update in weekly selections
+    for (const weekSelections of Object.values(this.data.weeklySelections)) {
+      for (const selection of Object.values(weekSelections)) {
+        if (selection.meal === oldName) {
+          selection.meal = newName;
+        }
+      }
+    }
+
+    // Update in history
+    for (const entry of this.data.history) {
+      if (entry.meal === oldName) {
+        entry.meal = newName;
+      }
+    }
+
+    this.saveData();
+    return category;
+  }
+
+  /**
+   * Delete a meal from a category. Also cleans up weekly selections.
+   */
+  deleteMeal(categoryId, mealName) {
+    this.loadData();
+
+    const category = this.data.categories[categoryId];
+    if (!category) {
+      throw new Error(`Kategori '${categoryId}' blev ikke fundet`);
+    }
+
+    const index = category.meals.indexOf(mealName);
+    if (index === -1) {
+      throw new Error(`'${mealName}' blev ikke fundet i kategorien`);
+    }
+
+    category.meals.splice(index, 1);
+
+    // Remove from weekly selections where this meal was selected
+    for (const weekSelections of Object.values(this.data.weeklySelections)) {
+      for (const [dateKey, selection] of Object.entries(weekSelections)) {
+        if (selection.meal === mealName) {
+          selection.meal = null;
+        }
+      }
+    }
+
+    this.saveData();
+    return category;
+  }
+
+  /**
+   * Update weekday-to-category mapping
+   */
+  updateWeekdayCategories(mapping) {
+    this.loadData();
+
+    // Validate all category IDs exist
+    for (const [day, catId] of Object.entries(mapping)) {
+      if (!this.data.categories[catId]) {
+        throw new Error(`Kategori '${catId}' blev ikke fundet`);
+      }
+    }
+
+    this.data.weekdayCategories = mapping;
+    this.saveData();
+    return this.data.weekdayCategories;
   }
 }
 

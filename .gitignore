@@ -29,6 +29,9 @@ build/
 tokens/
 *.token
 
+# Runtime meal data (use meals-default.json as seed)
+server/data/meals.json
+
 # Temporary files
 tmpclaude-*
 

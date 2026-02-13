@@ -1,0 +1,88 @@
+{
+  "categories": {
+    "ris": {
+      "name": "Ris",
+      "meals": [
+        "Høstak",
+        "Karry og ris",
+        "Ris og B sovs",
+        "Risengrød",
+        "Stegt ris"
+      ]
+    },
+    "kartofler": {
+      "name": "Kartofler",
+      "meals": [
+        "Nøddesteg",
+        "Bagte kartofler",
+        "Hawaii bøf",
+        "Millionbøf",
+        "Kartoffelmos",
+        "Pommes frites",
+        "Stuvet spinat"
+      ]
+    },
+    "pasta": {
+      "name": "Pasta",
+      "meals": [
+        "Lasagne",
+        "Pasta og spinat",
+        "Pasta i fad",
+        "Pasta tomatsovs",
+        "Suppehorn og æg",
+        "Pastasalat"
+      ]
+    },
+    "mexicansk": {
+      "name": "Mexicansk",
+      "meals": [
+        "Wraps",
+        "Tacos",
+        "Enchiladas",
+        "Chilli con carne",
+        "Quasadillas"
+      ]
+    },
+    "fastfood": {
+      "name": "Fast food",
+      "meals": [
+        "Burger",
+        "Havregrød",
+        "Majs kolber",
+        "Pita",
+        "Pizza",
+        "Pølsebrød"
+      ]
+    },
+    "suppe": {
+      "name": "Suppe",
+      "meals": [
+        "Tomatsuppe",
+        "Kartoffelsuppe"
+      ]
+    },
+    "andet": {
+      "name": "Andet",
+      "meals": [
+        "Brød",
+        "Frikedeller",
+        "Makaroni fisk",
+        "Omelet",
+        "Tarteletter",
+        "Tærte"
+      ]
+    }
+  },
+  "weekdayCategories": {
+    "0": "fastfood",
+    "1": "ris",
+    "2": "kartofler",
+    "3": "pasta",
+    "4": "suppe",
+    "5": "mexicansk",
+    "6": "andet"
+  },
+  "weeklySelections": {},
+  "history": [],
+  "historyWeeks": 3
+}
