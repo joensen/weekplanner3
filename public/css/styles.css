@@ -16,7 +16,7 @@
   --dropdown-bg: rgb(30, 30, 40);
   --meal-border: rgba(255, 180, 100, 0.4);
   --meal-bg: rgba(255, 180, 100, 0.1);
-  --meal-text-color: rgba(255, 200, 140, 0.9);
+  --meal-text-color: rgb(255, 220, 170);
   --meal-text-hover-bg: rgba(255, 180, 100, 0.2);
   --meal-text-hover-color: rgb(255, 210, 160);
   --today-highlight: rgba(79, 195, 247, 0.15);
