@@ -4,324 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Madplan Admin</title>
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: #1a1a2e;
-      color: #fff;
-      min-height: 100vh;
-      padding: 16px;
-      padding-top: 50px;
-    }
-
-    header {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    header h1 {
-      font-size: 24px;
-      font-weight: 600;
-    }
-
-    .status-bar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      background: #252540;
-      padding: 8px 16px;
-      font-size: 12px;
-      color: #888;
-      display: flex;
-      justify-content: space-between;
-      z-index: 100;
-    }
-
-    .status-bar .connected { color: #4caf50; }
-    .status-bar .disconnected { color: #f44336; }
-
-    h2 {
-      font-size: 20px;
-      color: #4fc3f7;
-      margin-bottom: 16px;
-      padding-bottom: 8px;
-      border-bottom: 1px solid #333;
-    }
-
-    .section {
-      margin-bottom: 32px;
-    }
-
-    /* Category cards */
-    .category-card {
-      background: #252540;
-      border-radius: 12px;
-      margin-bottom: 12px;
-      overflow: hidden;
-    }
-
-    .category-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 14px 16px;
-      cursor: pointer;
-      user-select: none;
-      gap: 8px;
-    }
-
-    .category-header:active {
-      background: #2d2d50;
-    }
-
-    .category-title {
-      font-weight: 600;
-      font-size: 16px;
-      flex: 1;
-    }
-
-    .category-count {
-      color: #888;
-      font-size: 13px;
-      margin-right: 8px;
-    }
-
-    .category-actions {
-      display: flex;
-      gap: 8px;
-    }
-
-    .category-body {
-      display: none;
-      padding: 0 16px 16px;
-    }
-
-    .category-body.open {
-      display: block;
-    }
-
-    /* Meal items */
-    .meal-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 10px 0;
-      border-bottom: 1px solid #333;
-      min-height: 44px;
-    }
-
-    .meal-item:last-of-type {
-      border-bottom: none;
-    }
-
-    .meal-name {
-      flex: 1;
-      font-size: 15px;
-    }
-
-    .meal-actions {
-      display: flex;
-      gap: 6px;
-    }
-
-    /* Add meal form */
-    .add-meal-form {
-      display: flex;
-      gap: 8px;
-      margin-top: 12px;
-    }
-
-    .add-meal-form input {
-      flex: 1;
-      min-width: 0;
-    }
-
-    /* Buttons */
-    .btn {
-      background: #333355;
-      color: #ccc;
-      border: none;
-      border-radius: 8px;
-      padding: 8px 14px;
-      font-size: 14px;
-      cursor: pointer;
-      min-height: 44px;
-      min-width: 44px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      white-space: nowrap;
-    }
-
-    .btn:active {
-      background: #444466;
-    }
-
-    .btn-primary {
-      background: #4fc3f7;
-      color: #000;
-      font-weight: 500;
-    }
-
-    .btn-primary:active {
-      background: #3aa8d8;
-    }
-
-    .btn-danger {
-      background: #553333;
-      color: #f88;
-    }
-
-    .btn-danger:active {
-      background: #664444;
-    }
-
-    .btn-sm {
-      padding: 6px 10px;
-      font-size: 13px;
-      min-height: 36px;
-      min-width: 36px;
-    }
-
-    /* Inputs */
-    input, select {
-      background: #1a1a2e;
-      color: #fff;
-      border: 1px solid #444;
-      border-radius: 8px;
-      padding: 12px;
-      font-size: 16px;
-      min-height: 44px;
-    }
-
-    input:focus, select:focus {
-      outline: none;
-      border-color: #4fc3f7;
-    }
-
-    /* New category form */
-    .new-category-form {
-      background: #252540;
-      border-radius: 12px;
-      padding: 16px;
-      margin-top: 12px;
-      display: none;
-    }
-
-    .new-category-form.open {
-      display: block;
-    }
-
-    .form-group {
-      margin-bottom: 12px;
-    }
-
-    .form-group label {
-      display: block;
-      font-size: 13px;
-      color: #888;
-      margin-bottom: 4px;
-    }
-
-    .form-group input {
-      width: 100%;
-    }
-
-    .form-actions {
-      display: flex;
-      gap: 8px;
-      justify-content: flex-end;
-    }
-
-    /* Weekday mapping */
-    .weekday-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 10px;
-      min-height: 44px;
-    }
-
-    .weekday-label {
-      width: 80px;
-      font-size: 15px;
-      font-weight: 500;
-    }
-
-    .weekday-select {
-      flex: 1;
-      min-width: 0;
-      appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23888' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 12px center;
-      padding-right: 32px;
-    }
-
-    .save-weekdays {
-      margin-top: 16px;
-      width: 100%;
-    }
-
-    /* Toast */
-    .toast {
-      position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #4fc3f7;
-      color: #000;
-      padding: 12px 24px;
-      border-radius: 8px;
-      font-weight: 500;
-      opacity: 0;
-      transition: opacity 0.3s;
-      z-index: 1000;
-      max-width: 90vw;
-      text-align: center;
-    }
-
-    .toast.show {
-      opacity: 1;
-    }
-
-    .toast.error {
-      background: #f44336;
-      color: #fff;
-    }
-
-    /* Loading */
-    .loading {
-      text-align: center;
-      padding: 40px;
-      color: #888;
-    }
-
-    /* Back link */
-    .back-link {
-      color: #4fc3f7;
-      text-decoration: none;
-      font-size: 14px;
-    }
-
-    .back-link:active {
-      opacity: 0.7;
-    }
-
-    header .subtitle {
-      display: flex;
-      justify-content: center;
-      gap: 16px;
-      margin-top: 8px;
-    }
-  </style>
+  <link rel="stylesheet" href="/css/meals.css">
+  <link rel="stylesheet" href="/css/meals-admin.css">
 </head>
 <body>
   <div class="status-bar">
@@ -332,7 +16,7 @@
   <header>
     <h1>Madplan Admin</h1>
     <div class="subtitle">
-      <a href="/meals.html" class="back-link">Tilbage til madplan</a>
+      <a href="/meals.html" onclick="event.preventDefault();window.location.href='/meals.html'" class="nav-link">Tilbage til madplan</a>
     </div>
   </header>
 
@@ -347,15 +31,12 @@
     // Weekday order for display (Monday first)
     const weekdayOrder = [1, 2, 3, 4, 5, 6, 0];
 
-    const categoryEmojis = {
-      'ris': '\u{1F35A}',
-      'kartofler': '\u{1F954}',
-      'pasta': '\u{1F35D}',
-      'mexicansk': '\u{1F32E}',
-      'fastfood': '\u{1F35F}',
-      'suppe': '\u{1F372}',
-      'andet': '\u{1F37D}'
-    };
+    const foodEmojis = [
+      '\u{1F35A}', '\u{1F954}', '\u{1F35D}', '\u{1F32E}', '\u{1F35F}', '\u{1F372}', '\u{1F37D}\u{FE0F}',
+      '\u{1F355}', '\u{1F969}', '\u{1F41F}', '\u{1F957}', '\u{1F956}', '\u{1F32F}', '\u{1F958}',
+      '\u{1F959}', '\u{1F95F}', '\u{1F9C6}', '\u{1F96A}', '\u{1F35B}', '\u{1F35C}',
+      '\u{1F95A}', '\u{1F953}', '\u{1F960}', '\u{1F96E}', '\u{1F9C7}', '\u{1F354}'
+    ];
 
     let adminData = null;
     let eventSource = null;
@@ -437,13 +118,14 @@
       html += '<h2>Kategorier</h2>';
 
       for (const [catId, category] of Object.entries(adminData.categories)) {
-        const emoji = categoryEmojis[catId] || '\u{1F37D}\u{FE0F}';
+        const emoji = category.emoji || '\u{1F37D}\u{FE0F}';
         const isOpen = openCategories.has(catId);
         const mealCount = category.meals ? category.meals.length : 0;
 
         html += `<div class="category-card">`;
         html += `<div class="category-header" onclick="toggleCategory('${catId}')">`;
-        html += `<span class="category-title">${emoji} ${escapeHtml(category.name)}</span>`;
+        html += `<button class="btn btn-sm emoji-btn" onclick="event.stopPropagation(); changeEmoji('${catId}')" title="Skift emoji">${emoji}</button>`;
+        html += `<span class="category-title">${escapeHtml(category.name)}</span>`;
         html += `<span class="category-count">${mealCount} retter</span>`;
         html += `<div class="category-actions">`;
         html += `<button class="btn btn-sm" onclick="event.stopPropagation(); renameCategory('${catId}', '${escapeAttr(category.name)}')">Omd\u00f8b</button>`;
@@ -480,6 +162,12 @@
       html += `<input type="text" id="new-cat-id" placeholder="f.eks. fisk" pattern="[a-z0-9_-]+"></div>`;
       html += `<div class="form-group"><label>Navn</label>`;
       html += `<input type="text" id="new-cat-name" placeholder="f.eks. Fisk" onkeydown="if(event.key==='Enter')addCategory()"></div>`;
+      html += `<div class="form-group"><label>Emoji</label>`;
+      html += `<div class="emoji-grid" id="new-cat-emoji-grid">`;
+      for (const e of foodEmojis) {
+        html += `<button type="button" class="emoji-option${e === '\u{1F37D}\u{FE0F}' ? ' selected' : ''}" onclick="selectNewCatEmoji(this, '${e}')">${e}</button>`;
+      }
+      html += `</div></div>`;
       html += `<div class="form-actions">`;
       html += `<button class="btn" onclick="toggleNewCategoryForm()">Annuller</button>`;
       html += `<button class="btn btn-primary" onclick="addCategory()">Tilf\u00f8j</button>`;
@@ -537,6 +225,14 @@
 
     // ─── Category actions ───────────────────────────────────────
 
+    let newCatEmoji = '\u{1F37D}\u{FE0F}';
+
+    function selectNewCatEmoji(btn, emoji) {
+      newCatEmoji = emoji;
+      document.querySelectorAll('#new-cat-emoji-grid .emoji-option').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+    }
+
     async function addCategory() {
       const idInput = document.getElementById('new-cat-id');
       const nameInput = document.getElementById('new-cat-name');
@@ -549,11 +245,48 @@
       }
 
       try {
-        await api('POST', '/categories', { id, name });
+        await api('POST', '/categories', { id, name, emoji: newCatEmoji });
         idInput.value = '';
         nameInput.value = '';
+        newCatEmoji = '\u{1F37D}\u{FE0F}';
         toggleNewCategoryForm();
         showToast('Kategori tilf\u00f8jet');
+        await loadAdminData();
+      } catch (error) {
+        showToast(error.message, true);
+      }
+    }
+
+    function changeEmoji(catId) {
+      const category = adminData.categories[catId];
+      const currentEmoji = category.emoji || '\u{1F37D}\u{FE0F}';
+
+      let html = '<div class="emoji-picker-overlay" onclick="if(event.target===this)closeEmojiPicker()">';
+      html += '<div class="emoji-picker-panel">';
+      html += `<h3>V\u00e6lg emoji for ${escapeHtml(category.name)}</h3>`;
+      html += '<div class="emoji-grid">';
+      for (const e of foodEmojis) {
+        html += `<button type="button" class="emoji-option${e === currentEmoji ? ' selected' : ''}" onclick="pickEmoji('${catId}', '${e}')">${e}</button>`;
+      }
+      html += '</div></div></div>';
+
+      const div = document.createElement('div');
+      div.id = 'emoji-picker';
+      div.innerHTML = html;
+      document.body.appendChild(div);
+    }
+
+    function closeEmojiPicker() {
+      const picker = document.getElementById('emoji-picker');
+      if (picker) picker.remove();
+    }
+
+    async function pickEmoji(catId, emoji) {
+      closeEmojiPicker();
+      const category = adminData.categories[catId];
+      try {
+        await api('PUT', '/categories/' + encodeURIComponent(catId), { name: category.name, emoji });
+        showToast('Emoji opdateret');
         await loadAdminData();
       } catch (error) {
         showToast(error.message, true);
@@ -649,6 +382,13 @@
     }
 
     // ─── Init ───────────────────────────────────────────────────
+
+    window.addEventListener('pagehide', () => {
+      if (eventSource) {
+        eventSource.close();
+        eventSource = null;
+      }
+    });
 
     document.addEventListener('DOMContentLoaded', () => {
       loadAdminData();

@@ -6,17 +6,6 @@ class MealRenderer {
     this.mealsData = null;
     this.activeDropdown = null;
 
-    // Emoji for each category
-    this.categoryEmojis = {
-      'ris': '\u{1F35A}',        // 🍚 Rice bowl
-      'kartofler': '\u{1F954}',  // 🥔 Potato
-      'pasta': '\u{1F35D}',      // 🍝 Spaghetti
-      'mexicansk': '\u{1F32E}',  // 🌮 Taco
-      'fastfood': '\u{1F35F}',   // 🍟 French fries
-      'suppe': '\u{1F372}',      // 🍲 Pot of food
-      'andet': '\u{1F37D}'       // 🍽️ Plate with cutlery
-    };
-
     // Close dropdown when clicking outside
     document.addEventListener('click', (e) => {
       if (this.activeDropdown && !e.target.closest('.meal-container')) {
@@ -29,7 +18,7 @@ class MealRenderer {
    * Get emoji for a category
    */
   getEmojiForCategory(categoryId) {
-    return this.categoryEmojis[categoryId] || '\u{1F37D}'; // Default to plate
+    return this.mealsData?.categories?.[categoryId]?.emoji || '\u{1F37D}\u{FE0F}';
   }
 
   /**

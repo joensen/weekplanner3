@@ -2,6 +2,7 @@
   "categories": {
     "ris": {
       "name": "Ris",
+      "emoji": "\ud83c\udf5a",
       "meals": [
         "Høstak",
         "Karry og ris",
@@ -12,6 +13,7 @@
     },
     "kartofler": {
       "name": "Kartofler",
+      "emoji": "\ud83e\udd54",
       "meals": [
         "Nøddesteg",
         "Bagte kartofler",
@@ -24,6 +26,7 @@
     },
     "pasta": {
       "name": "Pasta",
+      "emoji": "\ud83c\udf5d",
       "meals": [
         "Lasagne",
         "Pasta og spinat",
@@ -35,6 +38,7 @@
     },
     "mexicansk": {
       "name": "Mexicansk",
+      "emoji": "\ud83c\udf2e",
       "meals": [
         "Wraps",
         "Tacos",
@@ -45,6 +49,7 @@
     },
     "fastfood": {
       "name": "Fast food",
+      "emoji": "\ud83c\udf5f",
       "meals": [
         "Burger",
         "Havregrød",
@@ -56,6 +61,7 @@
     },
     "suppe": {
       "name": "Suppe",
+      "emoji": "\ud83c\udf72",
       "meals": [
         "Tomatsuppe",
         "Kartoffelsuppe"
@@ -63,6 +69,7 @@
     },
     "andet": {
       "name": "Andet",
+      "emoji": "\ud83c\udf7d\ufe0f",
       "meals": [
         "Brød",
         "Frikedeller",

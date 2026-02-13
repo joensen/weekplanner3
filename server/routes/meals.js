@@ -44,14 +44,14 @@ router.get('/admin', (req, res) => {
  */
 router.post('/categories', (req, res) => {
   try {
-    const { id, name } = req.body;
+    const { id, name, emoji } = req.body;
     if (!id || !name) {
       return res.status(400).json({ error: 'Mangler id og name' });
     }
     if (!/^[a-z0-9_-]+$/.test(id)) {
       return res.status(400).json({ error: 'ID må kun indeholde små bogstaver, tal, bindestreg og underscore' });
     }
-    const result = mealService.addCategory(id, name);
+    const result = mealService.addCategory(id, name, emoji || undefined);
     if (req.app.locals.broadcastUpdate) req.app.locals.broadcastUpdate('meal-update');
     res.status(201).json(result);
   } catch (error) {
@@ -66,11 +66,11 @@ router.post('/categories', (req, res) => {
  */
 router.put('/categories/:id', (req, res) => {
   try {
-    const { name } = req.body;
+    const { name, emoji } = req.body;
     if (!name) {
       return res.status(400).json({ error: 'Mangler name' });
     }
-    const result = mealService.renameCategory(req.params.id, name);
+    const result = mealService.renameCategory(req.params.id, name, emoji);
     if (req.app.locals.broadcastUpdate) req.app.locals.broadcastUpdate('meal-update');
     res.json(result);
   } catch (error) {

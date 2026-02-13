@@ -26,6 +26,10 @@ class MealService {
       }
       const content = fs.readFileSync(this.dataPath, 'utf8');
       this.data = JSON.parse(content);
+      // Backfill emoji for categories that don't have one
+      for (const cat of Object.values(this.data.categories || {})) {
+        if (!cat.emoji) cat.emoji = '\ud83c\udf7d\ufe0f';
+      }
     } catch (error) {
       console.error('Error loading meals data:', error);
       // Initialize with default structure
@@ -350,14 +354,14 @@ class MealService {
   /**
    * Add a new category
    */
-  addCategory(id, name) {
+  addCategory(id, name, emoji = '\ud83c\udf7d\ufe0f') {
     this.loadData();
 
     if (this.data.categories[id]) {
       throw new Error(`Kategori '${id}' findes allerede`);
     }
 
-    this.data.categories[id] = { name, meals: [] };
+    this.data.categories[id] = { name, emoji, meals: [] };
     this.saveData();
     return this.data.categories[id];
   }
@@ -365,7 +369,7 @@ class MealService {
   /**
    * Rename a category
    */
-  renameCategory(id, newName) {
+  renameCategory(id, newName, newEmoji) {
     this.loadData();
 
     if (!this.data.categories[id]) {
@@ -373,6 +377,9 @@ class MealService {
     }
 
     this.data.categories[id].name = newName;
+    if (newEmoji !== undefined) {
+      this.data.categories[id].emoji = newEmoji;
+    }
     this.saveData();
     return this.data.categories[id];
   }
