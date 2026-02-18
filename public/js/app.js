@@ -9,6 +9,7 @@
   // Initialize components
   const themeManager = new ThemeManager();
   const headerRenderer = new HeaderRenderer();
+  const weatherRenderer = new WeatherRenderer();
   const mealRenderer = new MealRenderer();
   const weekRenderer = new WeekRenderer(mealRenderer);
 
@@ -35,6 +36,9 @@
     // Start the clock
     headerRenderer.start();
 
+    // Start weather display
+    weatherRenderer.start();
+
     // Show loading states
     weekRenderer.showLoading();
 
@@ -55,6 +59,7 @@
   window.weekplanner = {
     themeManager,
     headerRenderer,
+    weatherRenderer,
     mealRenderer,
     weekRenderer,
     updateManager,
