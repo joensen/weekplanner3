@@ -71,7 +71,7 @@ body {
 .header-right {
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: 64px;
 }
 
 #weather {
