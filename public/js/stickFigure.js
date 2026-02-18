@@ -8,7 +8,10 @@ class StickFigureWalker {
     this.minInterval = 3 * 60 * 1000;  // Minimum 3 minutes between appearances
     this.maxInterval = 10 * 60 * 1000; // Maximum 10 minutes between appearances
 
+    this.currentCleanup = null;
+
     this.animations = [
+      'textFall',
       'walking',
       'running',
       'jumping',
@@ -60,6 +63,10 @@ class StickFigureWalker {
     // Stop current animation if running
     const existing = document.querySelector('.stick-container');
     if (existing) existing.remove();
+    if (this.currentCleanup) {
+      this.currentCleanup();
+      this.currentCleanup = null;
+    }
     this.isAnimating = false;
 
     // Get next animation in sequence
@@ -2394,6 +2401,114 @@ class StickFigureWalker {
     document.body.appendChild(container);
     setTimeout(() => clearInterval(kickInterval), 10000);
     this.cleanupAndSchedule(container, 10500);
+  }
+
+  create_textFall() {
+    // Collect visible content elements
+    const elements = Array.from(document.querySelectorAll(
+      '.day-row, .week-header, #current-date, #current-time'
+    ));
+
+    if (elements.length === 0) {
+      this.isAnimating = false;
+      this.scheduleNextAnimation();
+      return;
+    }
+
+    const viewportHeight = window.innerHeight;
+
+    // Save original styles and positions before falling
+    const items = elements.map(el => {
+      const rect = el.getBoundingClientRect();
+      return {
+        el,
+        originalTransform: el.style.transform,
+        originalTransition: el.style.transition,
+        origLeft: rect.left,
+        origTop: rect.top,
+        fallDistance: viewportHeight - rect.bottom + 30,
+      };
+    });
+
+    // Temporarily allow overflow so elements can visually fall out of containers
+    const overflowEls = Array.from(document.querySelectorAll(
+      '#calendar-section, .week-column, .days-container'
+    ));
+    const savedOverflow = overflowEls.map(el => ({
+      el,
+      overflow: el.style.overflow,
+      overflowY: el.style.overflowY,
+    }));
+    overflowEls.forEach(el => {
+      el.style.overflow = 'visible';
+      el.style.overflowY = 'visible';
+    });
+
+    // Setup cleanup function for safe interruption
+    const restoreAll = () => {
+      items.forEach(item => {
+        item.el.style.transition = '';
+        item.el.style.transform = item.originalTransform;
+      });
+      savedOverflow.forEach(s => {
+        s.el.style.overflow = s.overflow;
+        s.el.style.overflowY = s.overflowY;
+      });
+      timeoutIds.forEach(id => clearTimeout(id));
+    };
+    this.currentCleanup = restoreAll;
+
+    const timeoutIds = [];
+
+    // Phase 1: Make everything fall down (staggered over 1.5s)
+    items.forEach(item => {
+      const rotation = -30 + Math.random() * 60;
+      const delay = Math.random() * 1500;
+      item.el.style.transition = `transform 0.8s cubic-bezier(0.55, 0, 0.98, 0.54) ${delay}ms`;
+      item.el.style.transform = `translateY(${item.fallDistance}px) rotate(${rotation}deg)`;
+    });
+
+    // Phase 2: Cleaner arrives after text has fallen
+    const t1 = setTimeout(() => {
+      const container = document.createElement('div');
+      container.className = 'stick-container move-right-slow';
+      const wrapper = document.createElement('div');
+      wrapper.className = 'anim-clean anim-walk';
+      const person = this.createStickPerson();
+      const broom = document.createElement('div');
+      broom.className = 'broom';
+      broom.style.cssText = 'left: 35px; top: 25px; transform: rotate(-30deg);';
+      person.appendChild(broom);
+      wrapper.appendChild(person);
+      container.appendChild(wrapper);
+      document.body.appendChild(container);
+
+      // Phase 3: Restore elements progressively as cleaner sweeps
+      // Sort by horizontal position (left to right), then top to bottom
+      const sorted = [...items].sort((a, b) =>
+        a.origLeft - b.origLeft || a.origTop - b.origTop
+      );
+
+      sorted.forEach((item, i) => {
+        const delay = 1500 + (i / sorted.length) * 10000;
+        const t = setTimeout(() => {
+          item.el.style.transition = 'transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
+          item.el.style.transform = item.originalTransform;
+        }, delay);
+        timeoutIds.push(t);
+      });
+
+      // Full cleanup after cleaner finishes
+      const t2 = setTimeout(() => {
+        container.remove();
+        restoreAll();
+        this.currentCleanup = null;
+        this.isAnimating = false;
+        this.scheduleNextAnimation();
+      }, 14500);
+      timeoutIds.push(t2);
+    }, 3000);
+    timeoutIds.push(t1);
   }
 
   scheduleNextAnimation() {
