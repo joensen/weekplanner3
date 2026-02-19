@@ -202,9 +202,11 @@ body {
   font-weight: 700;
 }
 
-.day-separator {
-  font-size: 24px;
+.day-weather {
+  font-size: 18px;
+  font-weight: 500;
   color: var(--text-secondary);
+  white-space: nowrap;
 }
 
 /* Meal display */

@@ -9,6 +9,7 @@ class WeekRenderer {
     this.week2NumberEl = document.getElementById('week-2-number');
     this.mealRenderer = mealRenderer || null;
     this.lastCalendarData = null;
+    this.weatherData = null;
 
     // Danish day names (full form)
     this.dayNames = ['søndag', 'mandag', 'tirsdag', 'onsdag', 'torsdag', 'fredag', 'lørdag'];
@@ -126,21 +127,26 @@ class WeekRenderer {
     dayNumber.className = 'day-number';
     dayNumber.textContent = date.getDate();
 
-    const daySeparator = document.createElement('span');
-    daySeparator.className = 'day-separator';
-    daySeparator.textContent = ' - ';
-
     const dayName = document.createElement('span');
     dayName.className = 'day-name';
     dayName.textContent = this.dayNames[date.getDay()];
 
     dayHeader.appendChild(dayNumber);
-    dayHeader.appendChild(daySeparator);
     dayHeader.appendChild(dayName);
+
+    // Add weather forecast if available
+    const dateKey = this.formatDateKey(date);
+    if (this.weatherData && this.weatherData[dateKey]) {
+      const w = this.weatherData[dateKey];
+      const weatherEl = document.createElement('span');
+      weatherEl.className = 'day-weather';
+      weatherEl.textContent = `${w.emoji} ${w.tempMax}° / ${w.tempMin}°`;
+      dayHeader.appendChild(weatherEl);
+    }
 
     // Add meal display if mealRenderer is available
     if (this.mealRenderer) {
-      const mealElement = this.mealRenderer.createMealElement(this.formatDateKey(date));
+      const mealElement = this.mealRenderer.createMealElement(dateKey);
       dayHeader.appendChild(mealElement);
     }
 
@@ -228,13 +234,29 @@ class WeekRenderer {
   }
 
   /**
+   * Fetch daily weather forecast
+   */
+  async fetchWeatherForecast() {
+    try {
+      const response = await fetch('/api/weather/forecast');
+      if (!response.ok) return;
+      this.weatherData = await response.json();
+    } catch (error) {
+      console.error('Weather forecast fetch error:', error);
+    }
+  }
+
+  /**
    * Update the display with calendar data
    */
-  update(data) {
+  async update(data) {
     if (!data || !data.weeks || data.weeks.length < 2) {
       console.warn('Invalid calendar data');
       return;
     }
+
+    // Fetch weather forecast
+    await this.fetchWeatherForecast();
 
     // Store for refresh
     this.lastCalendarData = data;
