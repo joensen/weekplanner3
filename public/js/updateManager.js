@@ -12,6 +12,45 @@ class UpdateManager {
     this.reconnectDelay = 5000; // 5 seconds
     this.maxReconnectDelay = 60000; // 1 minute max
     this.currentReconnectDelay = this.reconnectDelay;
+
+    // Connection status tracking
+    this.online = navigator.onLine;
+    this.statusEl = null;
+    this.initStatusIndicator();
+
+    // Listen for browser online/offline events
+    window.addEventListener('online', () => this.setOnline(true));
+    window.addEventListener('offline', () => this.setOnline(false));
+  }
+
+  /**
+   * Create connection status indicator in the header
+   */
+  initStatusIndicator() {
+    this.statusEl = document.createElement('div');
+    this.statusEl.id = 'connection-status';
+    this.updateStatusIndicator();
+    const header = document.getElementById('header');
+    if (header) {
+      header.appendChild(this.statusEl);
+    }
+  }
+
+  /**
+   * Update the visual connection indicator
+   */
+  updateStatusIndicator() {
+    if (!this.statusEl) return;
+    this.statusEl.className = this.online ? 'status-online' : 'status-offline';
+    this.statusEl.title = this.online ? 'Forbundet' : 'Ingen forbindelse';
+  }
+
+  /**
+   * Set connection status
+   */
+  setOnline(isOnline) {
+    this.online = isOnline;
+    this.updateStatusIndicator();
   }
 
   /**
@@ -117,9 +156,11 @@ class UpdateManager {
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
       const data = await response.json();
+      this.setOnline(true);
       this.onCalendarUpdate(data);
     } catch (error) {
       console.error('Error loading calendar:', error);
+      this.setOnline(false);
     }
   }
 
