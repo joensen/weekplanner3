@@ -306,17 +306,15 @@ class WeekRenderer {
       return;
     }
 
-    // Scroll to bottom first
-    container.scrollTop = container.scrollHeight - container.clientHeight;
+    // Scroll so that all of today's events are visible,
+    // and as much of the content below today as possible.
+    // Position: today's bottom aligned with container's bottom,
+    // but never scroll today's top out of view.
+    const todayBottom = todayRow.offsetTop + todayRow.offsetHeight;
+    const idealScroll = todayBottom - container.clientHeight;
 
-    // Check if today is still visible
-    const containerRect = container.getBoundingClientRect();
-    const todayRect = todayRow.getBoundingClientRect();
-
-    if (todayRect.top < containerRect.top) {
-      // Today scrolled out of view above - scroll up so today is at the top
-      container.scrollTop = todayRow.offsetTop;
-    }
+    // Don't scroll above today's top (would hide the start of today)
+    container.scrollTop = Math.max(0, Math.min(idealScroll, todayRow.offsetTop));
   }
 
   /**

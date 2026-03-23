@@ -163,6 +163,25 @@ body {
   display: flex;
   flex-direction: column;
   overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent) transparent;
+}
+
+.days-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.days-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.days-container::-webkit-scrollbar-thumb {
+  background: var(--accent);
+  border-radius: 3px;
+}
+
+.days-container::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
 }
 
 /* Day rows */

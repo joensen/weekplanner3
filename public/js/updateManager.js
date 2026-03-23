@@ -30,9 +30,9 @@ class UpdateManager {
     this.statusEl = document.createElement('div');
     this.statusEl.id = 'connection-status';
     this.updateStatusIndicator();
-    const header = document.getElementById('header');
-    if (header) {
-      header.appendChild(this.statusEl);
+    const timeEl = document.getElementById('current-time');
+    if (timeEl && timeEl.parentNode) {
+      timeEl.parentNode.insertBefore(this.statusEl, timeEl);
     }
   }
 
