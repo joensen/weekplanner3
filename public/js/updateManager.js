@@ -5,6 +5,7 @@ class UpdateManager {
   constructor(options) {
     this.onCalendarUpdate = options.onCalendarUpdate || (() => {});
     this.onMealUpdate = options.onMealUpdate || (() => {});
+    this.onStatusChange = options.onStatusChange || (() => {});
 
     this.eventSource = null;
     this.pollInterval = null;
@@ -12,6 +13,14 @@ class UpdateManager {
     this.reconnectDelay = 5000; // 5 seconds
     this.maxReconnectDelay = 60000; // 1 minute max
     this.currentReconnectDelay = this.reconnectDelay;
+    this.systemStatusIntervalMs = 60 * 1000;
+    this.systemStatusInterval = null;
+
+    this.sseState = 'connecting';
+    this.calendarFetchError = null;
+    this.mealFetchError = null;
+    this.calendarSyncStatus = null;
+    this.systemStatus = null;
   }
 
   /**
@@ -23,11 +32,13 @@ class UpdateManager {
 
     // Initial data load
     this.loadAll();
+    this.loadSystemStatus();
 
     // Start fallback polling
     this.startPolling();
+    this.startSystemStatusPolling();
 
-    console.log('🔄 Update manager started');
+    console.log('Update manager started');
   }
 
   /**
@@ -38,18 +49,20 @@ class UpdateManager {
       this.eventSource.close();
     }
 
-    console.log('📡 Connecting to SSE...');
+    console.log('Connecting to SSE...');
     this.eventSource = new EventSource('/api/events-stream');
 
     this.eventSource.onopen = () => {
-      console.log('✅ SSE connected');
-      this.currentReconnectDelay = this.reconnectDelay; // Reset delay on successful connection
+      console.log('SSE connected');
+      this.sseState = 'connected';
+      this.currentReconnectDelay = this.reconnectDelay;
+      this.emitStatus();
     };
 
     this.eventSource.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
-        console.log(`📨 SSE message: ${data.type}`);
+        console.log(`SSE message: ${data.type}`);
 
         switch (data.type) {
           case 'connected':
@@ -71,16 +84,16 @@ class UpdateManager {
       }
     };
 
-    this.eventSource.onerror = (error) => {
-      console.warn('❌ SSE connection error, will reconnect...');
+    this.eventSource.onerror = () => {
+      console.warn('SSE connection error, will reconnect...');
+      this.sseState = 'disconnected';
       this.eventSource.close();
+      this.emitStatus();
 
-      // Exponential backoff for reconnection
       setTimeout(() => {
         this.connectSSE();
       }, this.currentReconnectDelay);
 
-      // Increase delay for next attempt (up to max)
       this.currentReconnectDelay = Math.min(
         this.currentReconnectDelay * 2,
         this.maxReconnectDelay
@@ -93,9 +106,15 @@ class UpdateManager {
    */
   startPolling() {
     this.pollInterval = setInterval(() => {
-      console.log('⏰ Polling for updates...');
+      console.log('Polling for updates...');
       this.loadAll();
     }, this.pollIntervalMs);
+  }
+
+  startSystemStatusPolling() {
+    this.systemStatusInterval = setInterval(() => {
+      this.loadSystemStatus();
+    }, this.systemStatusIntervalMs);
   }
 
   /**
@@ -105,6 +124,11 @@ class UpdateManager {
     if (this.pollInterval) {
       clearInterval(this.pollInterval);
       this.pollInterval = null;
+    }
+
+    if (this.systemStatusInterval) {
+      clearInterval(this.systemStatusInterval);
+      this.systemStatusInterval = null;
     }
   }
 
@@ -117,9 +141,14 @@ class UpdateManager {
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
       const data = await response.json();
+      this.calendarFetchError = null;
+      this.calendarSyncStatus = data.syncStatus?.calendar || null;
       this.onCalendarUpdate(data);
+      this.emitStatus(data.lastUpdated);
     } catch (error) {
       console.error('Error loading calendar:', error);
+      this.calendarFetchError = error.message;
+      this.emitStatus();
     }
   }
 
@@ -132,9 +161,32 @@ class UpdateManager {
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
       const data = await response.json();
+      this.mealFetchError = null;
       this.onMealUpdate(data);
+      this.emitStatus();
     } catch (error) {
       console.error('Error loading meals:', error);
+      this.mealFetchError = error.message;
+      this.emitStatus();
+    }
+  }
+
+  async loadSystemStatus() {
+    try {
+      const response = await fetch('/api/system-status');
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+      this.systemStatus = await response.json();
+      this.emitStatus();
+    } catch (error) {
+      console.error('Error loading system status:', error);
+      this.systemStatus = {
+        status: 'warning',
+        source: 'frontend',
+        message: 'Systemstatus kunne ikke hentes.',
+        detail: 'Skærmen kan ikke laese Pi watchdog status lige nu.'
+      };
+      this.emitStatus();
     }
   }
 
@@ -157,7 +209,89 @@ class UpdateManager {
       this.eventSource = null;
     }
     this.stopPolling();
-    console.log('🛑 Update manager stopped');
+    console.log('Update manager stopped');
+  }
+
+  formatTimestamp(timestamp) {
+    if (!timestamp) {
+      return null;
+    }
+
+    const date = new Date(timestamp);
+    if (Number.isNaN(date.getTime())) {
+      return null;
+    }
+
+    return date.toLocaleTimeString('da-DK', {
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  }
+
+  getStatus(lastUpdated) {
+    if (this.systemStatus && this.systemStatus.status === 'error') {
+      return {
+        level: 'error',
+        message: this.systemStatus.message || 'Pi netvaerket har problemer.',
+        detail: this.systemStatus.detail || 'Watchdog har registreret en forbindelsesfejl.'
+      };
+    }
+
+    if (this.systemStatus && this.systemStatus.status === 'warning') {
+      return {
+        level: 'warning',
+        message: this.systemStatus.message || 'Pi status er usikker.',
+        detail: this.systemStatus.detail || 'Watchdog status kunne ikke laeses.'
+      };
+    }
+
+    if (this.calendarFetchError) {
+      return {
+        level: 'error',
+        message: 'Kalenderen kunne ikke hentes.',
+        detail: 'Skærmen prøver igen automatisk.'
+      };
+    }
+
+    if (this.mealFetchError) {
+      return {
+        level: 'warning',
+        message: 'Maddata kunne ikke opdateres.',
+        detail: 'Kalenderen fortsætter med de seneste data.'
+      };
+    }
+
+    if (this.calendarSyncStatus && this.calendarSyncStatus.state === 'warning') {
+      const updatedAt = this.formatTimestamp(lastUpdated || this.calendarSyncStatus.lastSuccessAt);
+      return {
+        level: 'warning',
+        message: 'Kalenderforbindelsen driller. Viser gemte data.',
+        detail: updatedAt ? `Sidst opdateret kl. ${updatedAt}.` : 'Skærmen prøver igen automatisk.'
+      };
+    }
+
+    if (this.calendarSyncStatus && this.calendarSyncStatus.state === 'error') {
+      const failedAt = this.formatTimestamp(this.calendarSyncStatus.lastErrorAt);
+      return {
+        level: 'error',
+        message: 'Kalenderen kan ikke opdateres lige nu.',
+        detail: failedAt ? `Seneste fejl kl. ${failedAt}.` : 'Tjek Pi netværk og Google-forbindelse.'
+      };
+    }
+
+    if (this.sseState === 'disconnected') {
+      return {
+        level: 'warning',
+        message: 'Direkte opdatering er afbrudt.',
+        detail: 'Skærmen prøver at genoprette forbindelsen.'
+      };
+    }
+
+    return null;
+  }
+
+  emitStatus(lastUpdated) {
+    this.onStatusChange(this.getStatus(lastUpdated));
   }
 }
 

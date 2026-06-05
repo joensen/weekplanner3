@@ -80,6 +80,40 @@ body {
   gap: 6px;
 }
 
+.system-status {
+  min-height: 58px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  padding: 10px 40px;
+  border-bottom: 1px solid var(--border-color);
+  background: rgba(120, 55, 0, 0.88);
+}
+
+.system-status[hidden] {
+  display: none;
+}
+
+.system-status.error {
+  background: rgba(124, 18, 18, 0.92);
+}
+
+.system-status.warning {
+  background: rgba(120, 55, 0, 0.88);
+}
+
+.system-status-message {
+  font-size: 24px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.system-status-detail {
+  font-size: 18px;
+  color: rgba(255, 255, 255, 0.84);
+}
+
 .weather-icon {
   font-size: 32px;
   line-height: 1;

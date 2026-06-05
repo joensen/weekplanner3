@@ -8,6 +8,7 @@ const webhookRouter = require('./routes/webhook');
 const simulateRouter = require('./routes/simulate');
 const mealsRouter = require('./routes/meals');
 const weatherRouter = require('./routes/weather');
+const systemStatusRouter = require('./routes/systemStatus');
 const calendarService = require('./services/calendarService');
 
 const app = express();
@@ -29,6 +30,7 @@ app.use('/api/webhook', webhookRouter);
 app.use('/api/simulate', simulateRouter);
 app.use('/api/meals', mealsRouter);
 app.use('/api/weather', weatherRouter);
+app.use('/api/system-status', systemStatusRouter);
 
 // SSE endpoint for real-time updates
 app.get('/api/events-stream', (req, res) => {

@@ -13,6 +13,36 @@ class CalendarService {
     this.initialized = false;
     this.cache = cache;
     this.mockMode = process.env.MOCK_MODE === 'true';
+    this.syncState = {
+      state: 'idle',
+      lastAttemptAt: null,
+      lastSuccessAt: null,
+      lastErrorAt: null,
+      lastErrorMessage: null,
+      source: 'none'
+    };
+  }
+
+  getSyncStatus() {
+    return {
+      ...this.syncState
+    };
+  }
+
+  updateSyncState(patch) {
+    this.syncState = {
+      ...this.syncState,
+      ...patch
+    };
+  }
+
+  buildResponse(payload) {
+    return {
+      ...payload,
+      syncStatus: {
+        calendar: this.getSyncStatus()
+      }
+    };
   }
 
   initialize() {
@@ -135,19 +165,34 @@ class CalendarService {
    */
   async fetchAllEvents() {
     this.initialize();
+    this.updateSyncState({
+      lastAttemptAt: new Date().toISOString()
+    });
 
     // Mock mode: return simulated data
     if (this.mockMode) {
       const cachedData = cache.get('all_events');
       if (cachedData) {
         console.log('Returning cached mock calendar data');
-        return cachedData;
+        this.updateSyncState({
+          state: 'ok',
+          source: 'mock-cache'
+        });
+        return this.buildResponse(cachedData);
       }
 
       console.log('🎭 Generating mock calendar data...');
       const mockData = mockDataService.generateCalendarData();
       cache.set('all_events', mockData);
-      return mockData;
+      const nowIso = new Date().toISOString();
+      this.updateSyncState({
+        state: 'ok',
+        lastSuccessAt: nowIso,
+        lastErrorAt: null,
+        lastErrorMessage: null,
+        source: 'mock'
+      });
+      return this.buildResponse(mockData);
     }
 
     if (!this.initialized) {
@@ -155,16 +200,32 @@ class CalendarService {
       const cachedData = cache.get('all_events');
       if (cachedData) {
         console.log('Returning cached calendar data (service not initialized)');
-        return cachedData;
+        this.updateSyncState({
+          state: 'error',
+          lastErrorAt: new Date().toISOString(),
+          lastErrorMessage: 'Calendar service not initialized',
+          source: 'cache'
+        });
+        return this.buildResponse(cachedData);
       }
-      return { events: [], weeks: [], lastUpdated: new Date().toISOString() };
+      this.updateSyncState({
+        state: 'error',
+        lastErrorAt: new Date().toISOString(),
+        lastErrorMessage: 'Calendar service not initialized',
+        source: 'none'
+      });
+      return this.buildResponse({ events: [], weeks: [], lastUpdated: new Date().toISOString() });
     }
 
     // Check cache first
     const cachedData = cache.get('all_events');
     if (cachedData) {
       console.log('Returning cached calendar data');
-      return cachedData;
+      this.updateSyncState({
+        state: 'ok',
+        source: 'cache'
+      });
+      return this.buildResponse(cachedData);
     }
 
     console.log('Fetching fresh calendar data from Google Calendar API...');
@@ -226,20 +287,38 @@ class CalendarService {
 
       // Cache the result
       cache.set('all_events', result);
+      this.updateSyncState({
+        state: 'ok',
+        lastSuccessAt: result.lastUpdated,
+        lastErrorAt: null,
+        lastErrorMessage: null,
+        source: 'live'
+      });
       console.log(`Fetched ${allEvents.length} events from ${config.calendars.length} calendars`);
 
-      return result;
+      return this.buildResponse(result);
     } catch (error) {
       console.error('Error fetching calendar events:', error.message);
+      const errorTimestamp = new Date().toISOString();
+      this.updateSyncState({
+        state: 'error',
+        lastErrorAt: errorTimestamp,
+        lastErrorMessage: error.message,
+        source: 'none'
+      });
 
       // Fallback to cached data even if expired
       const cachedData = cache.get('all_events');
       if (cachedData) {
         console.log('Returning expired cached data due to error');
-        return cachedData;
+        this.updateSyncState({
+          state: 'warning',
+          source: 'cache'
+        });
+        return this.buildResponse(cachedData);
       }
 
-      return { events: [], weeks: [], lastUpdated: new Date().toISOString() };
+      return this.buildResponse({ events: [], weeks: [], lastUpdated: errorTimestamp });
     }
   }
 

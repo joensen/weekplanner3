@@ -12,6 +12,7 @@
   const weatherRenderer = new WeatherRenderer();
   const mealRenderer = new MealRenderer();
   const weekRenderer = new WeekRenderer(mealRenderer);
+  const statusBanner = new StatusBanner();
 
   // Initialize update manager with callbacks
   const updateManager = new UpdateManager({
@@ -21,6 +22,9 @@
     onMealUpdate: (data) => {
       mealRenderer.update(data);
       weekRenderer.refresh();
+    },
+    onStatusChange: (status) => {
+      statusBanner.setStatus(status);
     }
   });
 
@@ -62,6 +66,7 @@
     weatherRenderer,
     mealRenderer,
     weekRenderer,
+    statusBanner,
     updateManager,
     refresh: () => updateManager.loadAll()
   };
