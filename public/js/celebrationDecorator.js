@@ -13,7 +13,7 @@ class CelebrationDecorator {
         key: 'constitution-day',
         label: 'Grundlovsdag',
         shortLabel: 'Grundlov',
-        emoji: '🇩🇰',
+        emoji: '📜',
         type: 'holiday',
         className: 'constitution-day',
         priority: 100,
@@ -178,7 +178,7 @@ class CelebrationDecorator {
         key: 'holiday',
         label: 'Helligdag',
         shortLabel: 'Helligdag',
-        emoji: '🇩🇰',
+        emoji: '✨',
         type: 'holiday',
         className: 'holiday-generic',
         priority: 40,
@@ -245,6 +245,12 @@ class CelebrationDecorator {
     }
 
     return { ...match, sourceLabel: event.summary || match.label };
+  }
+
+  getEventIcon(event) {
+    if (this.isBirthdayCalendar(event)) return '🇩🇰';
+    if (this.isHolidayCalendar(event)) return this.matchHoliday(event).emoji;
+    return '';
   }
 
   matchBirthday(event) {

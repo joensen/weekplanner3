@@ -177,8 +177,8 @@ class WeekRenderer {
 
         const eventTitle = document.createElement('span');
         eventTitle.className = 'event-title';
-        // Danish holidays get a small event-level flag in addition to row/page art.
-        const prefix = this.celebrationDecorator && this.celebrationDecorator.isHolidayCalendar(event) ? '🇩🇰 ' : '';
+        const eventIcon = this.celebrationDecorator ? this.celebrationDecorator.getEventIcon(event) : '';
+        const prefix = eventIcon ? `${eventIcon} ` : '';
         eventTitle.textContent = prefix + event.summary;
 
         eventItem.appendChild(eventTitle);
