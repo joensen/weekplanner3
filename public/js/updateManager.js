@@ -13,7 +13,7 @@ class UpdateManager {
     this.reconnectDelay = 5000; // 5 seconds
     this.maxReconnectDelay = 60000; // 1 minute max
     this.currentReconnectDelay = this.reconnectDelay;
-    this.systemStatusIntervalMs = 60 * 1000;
+    this.systemStatusIntervalMs = 10 * 1000;
     this.systemStatusInterval = null;
 
     this.sseState = 'connecting';
