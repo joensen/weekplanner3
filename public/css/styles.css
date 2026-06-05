@@ -469,6 +469,8 @@ body {
   font-size: var(--size);
   transform: translate(-50%, -50%) rotate(var(--rotate));
   opacity: 0.42;
+  animation: celebration-float 9s ease-in-out infinite;
+  animation-delay: var(--delay);
   user-select: none;
 }
 
