@@ -43,6 +43,7 @@ body {
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 
 /* Header - ~100px */
@@ -55,6 +56,8 @@ body {
   padding: 0 40px;
   border-bottom: 2px solid var(--border-color);
   flex-shrink: 0;
+  position: relative;
+  z-index: 3;
 }
 
 #current-date {
@@ -112,6 +115,8 @@ body {
   padding: 10px 40px;
   border-bottom: 1px solid var(--border-color);
   background: rgba(120, 55, 0, 0.88);
+  position: relative;
+  z-index: 4;
 }
 
 .system-status[hidden] {
@@ -154,6 +159,8 @@ body {
   display: flex;
   min-height: 0;
   overflow: hidden;
+  position: relative;
+  z-index: 2;
 }
 
 /* Week columns */
@@ -212,6 +219,8 @@ body {
   padding: 12px 16px;
   flex-shrink: 0;
   transition: opacity 0.3s ease;
+  position: relative;
+  overflow: hidden;
 }
 
 .day-row:last-child {
@@ -251,6 +260,8 @@ body {
   gap: 8px;
   margin-bottom: 6px;
   flex-shrink: 0;
+  position: relative;
+  z-index: 2;
 }
 
 .day-name {
@@ -358,6 +369,8 @@ body {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  position: relative;
+  z-index: 2;
 }
 
 /* Event items */
@@ -437,4 +450,309 @@ body {
 
 @keyframes spin {
   to { transform: rotate(360deg); }
+}
+
+/* Celebration mode */
+#celebration-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0.92;
+}
+
+.celebration-token {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  font-size: var(--size);
+  transform: translate(-50%, -50%) rotate(var(--rotate));
+  opacity: 0.52;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.28));
+  animation: celebration-float 7s ease-in-out infinite;
+  animation-delay: var(--delay);
+  user-select: none;
+}
+
+@keyframes celebration-float {
+  0%, 100% { transform: translate(-50%, -50%) rotate(var(--rotate)) scale(1); }
+  50% { transform: translate(-50%, calc(-50% - 18px)) rotate(calc(var(--rotate) + 7deg)) scale(1.08); }
+}
+
+body.page-celebration-active #header::before {
+  content: '';
+  position: absolute;
+  left: 24px;
+  right: 24px;
+  bottom: -18px;
+  height: 28px;
+  background:
+    linear-gradient(135deg, transparent 0 45%, rgba(255,255,255,0.9) 46% 54%, transparent 55%),
+    repeating-linear-gradient(90deg, #c8102e 0 34px, #ffffff 34px 48px, #c8102e 48px 82px);
+  clip-path: polygon(0 0, 5% 100%, 10% 0, 15% 100%, 20% 0, 25% 100%, 30% 0, 35% 100%, 40% 0, 45% 100%, 50% 0, 55% 100%, 60% 0, 65% 100%, 70% 0, 75% 100%, 80% 0, 85% 100%, 90% 0, 95% 100%, 100% 0);
+  opacity: 0.76;
+  pointer-events: none;
+}
+
+.celebration-day {
+  --celebration-a: rgba(255, 255, 255, 0.18);
+  --celebration-b: rgba(200, 16, 46, 0.34);
+  --celebration-c: rgba(255, 224, 92, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+}
+
+.celebration-day::before,
+.celebration-day::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.celebration-day::before {
+  background:
+    radial-gradient(circle at 8% 18%, var(--celebration-a) 0 18px, transparent 19px),
+    radial-gradient(circle at 88% 82%, var(--celebration-c) 0 26px, transparent 27px),
+    linear-gradient(115deg, transparent 0 22%, var(--celebration-b) 23% 29%, transparent 30% 100%);
+  opacity: 0.82;
+}
+
+.celebration-day::after {
+  right: 10px;
+  left: auto;
+  width: 150px;
+  background: var(--celebration-row-icon, none);
+  background-repeat: repeat;
+  background-size: 48px 48px;
+  opacity: 0.24;
+}
+
+.celebration-today {
+  box-shadow:
+    inset 0 0 0 2px rgba(255, 255, 255, 0.28),
+    0 0 28px rgba(255, 255, 255, 0.16);
+}
+
+.celebration-label {
+  min-width: 0;
+  max-width: 280px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.28);
+  color: #ffffff;
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: 0;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+}
+
+.celebration-day .event-item,
+.celebration-day .meal-container,
+.celebration-day .day-weather,
+.celebration-day .celebration-label {
+  position: relative;
+  z-index: 2;
+}
+
+.celebration-constitution-day {
+  --celebration-a: rgba(255, 255, 255, 0.32);
+  --celebration-b: rgba(200, 16, 46, 0.58);
+  --celebration-c: rgba(255, 255, 255, 0.22);
+  --celebration-row-icon: linear-gradient(90deg, #c8102e 0 26%, #ffffff 26% 36%, #c8102e 36% 100%);
+}
+
+.celebration-fathers-day {
+  --celebration-a: rgba(45, 126, 255, 0.22);
+  --celebration-b: rgba(255, 202, 72, 0.32);
+  --celebration-c: rgba(38, 78, 150, 0.26);
+  --celebration-row-icon: radial-gradient(circle, rgba(255, 202, 72, 0.9) 0 20%, transparent 21% 100%);
+}
+
+.celebration-birthday-noah {
+  --celebration-a: rgba(80, 196, 136, 0.34);
+  --celebration-b: rgba(44, 132, 255, 0.36);
+  --celebration-c: rgba(255, 232, 114, 0.3);
+}
+
+.celebration-birthday-sarah {
+  --celebration-a: rgba(255, 105, 180, 0.3);
+  --celebration-b: rgba(255, 209, 92, 0.34);
+  --celebration-c: rgba(255, 255, 255, 0.25);
+}
+
+.celebration-birthday-leah {
+  --celebration-a: rgba(170, 124, 255, 0.32);
+  --celebration-b: rgba(255, 224, 92, 0.32);
+  --celebration-c: rgba(255, 128, 180, 0.22);
+}
+
+.celebration-birthday-hannah {
+  --celebration-a: rgba(255, 126, 102, 0.3);
+  --celebration-b: rgba(42, 210, 196, 0.3);
+  --celebration-c: rgba(255, 255, 255, 0.24);
+}
+
+.celebration-birthday-andreas {
+  --celebration-a: rgba(20, 64, 130, 0.34);
+  --celebration-b: rgba(255, 139, 42, 0.34);
+  --celebration-c: rgba(255, 222, 98, 0.24);
+}
+
+.celebration-birthday-charlotte {
+  --celebration-a: rgba(222, 94, 128, 0.32);
+  --celebration-b: rgba(255, 212, 116, 0.34);
+  --celebration-c: rgba(255, 245, 230, 0.22);
+}
+
+.celebration-new-year,
+.celebration-new-year-eve {
+  --celebration-a: rgba(255, 215, 80, 0.34);
+  --celebration-b: rgba(80, 180, 255, 0.28);
+  --celebration-c: rgba(255, 90, 160, 0.26);
+}
+
+.celebration-maundy-thursday,
+.celebration-easter,
+.celebration-easter-monday {
+  --celebration-a: rgba(136, 210, 96, 0.3);
+  --celebration-b: rgba(255, 236, 132, 0.3);
+  --celebration-c: rgba(255, 180, 210, 0.22);
+}
+
+.celebration-good-friday {
+  --celebration-a: rgba(116, 76, 170, 0.22);
+  --celebration-b: rgba(255, 255, 255, 0.16);
+  --celebration-c: rgba(80, 40, 120, 0.28);
+}
+
+.celebration-ascension {
+  --celebration-a: rgba(120, 200, 255, 0.3);
+  --celebration-b: rgba(255, 255, 255, 0.26);
+  --celebration-c: rgba(88, 156, 255, 0.22);
+}
+
+.celebration-pentecost,
+.celebration-pentecost-monday {
+  --celebration-a: rgba(255, 190, 70, 0.32);
+  --celebration-b: rgba(218, 52, 42, 0.34);
+  --celebration-c: rgba(255, 235, 160, 0.24);
+}
+
+.celebration-christmas-eve,
+.celebration-christmas,
+.celebration-boxing-day {
+  --celebration-a: rgba(255, 255, 255, 0.28);
+  --celebration-b: rgba(20, 130, 76, 0.3);
+  --celebration-c: rgba(210, 28, 48, 0.36);
+}
+
+body.page-celebration-constitution-day #celebration-layer {
+  background:
+    repeating-linear-gradient(90deg, rgba(200, 16, 46, 0.12) 0 22px, transparent 22px 76px),
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.08) 0 18px, transparent 18px 90px);
+}
+
+body.page-celebration-fathers-day #celebration-layer {
+  background:
+    radial-gradient(circle at 12% 18%, rgba(64, 135, 255, 0.24) 0 42px, transparent 43px),
+    radial-gradient(circle at 86% 26%, rgba(255, 206, 82, 0.2) 0 54px, transparent 55px),
+    repeating-linear-gradient(120deg, rgba(41, 88, 170, 0.12) 0 24px, transparent 24px 76px);
+}
+
+body[class*="page-celebration-birthday"] #celebration-layer,
+body[class*="page-celebration-has-birthday"] #celebration-layer {
+  background:
+    radial-gradient(circle at 10% 22%, rgba(255, 120, 170, 0.18) 0 48px, transparent 49px),
+    radial-gradient(circle at 88% 18%, rgba(92, 190, 255, 0.18) 0 58px, transparent 59px),
+    radial-gradient(circle at 76% 80%, rgba(255, 220, 100, 0.16) 0 62px, transparent 63px),
+    repeating-linear-gradient(160deg, rgba(255, 255, 255, 0.08) 0 12px, transparent 12px 56px);
+}
+
+body.page-celebration-easter #celebration-layer,
+body.page-celebration-easter-monday #celebration-layer,
+body.page-celebration-maundy-thursday #celebration-layer {
+  background:
+    radial-gradient(ellipse at 16% 24%, rgba(255, 234, 128, 0.2) 0 52px, transparent 54px),
+    radial-gradient(ellipse at 82% 72%, rgba(150, 220, 118, 0.18) 0 66px, transparent 68px),
+    repeating-linear-gradient(135deg, rgba(255, 172, 208, 0.12) 0 18px, transparent 18px 72px);
+}
+
+body.page-celebration-ascension #celebration-layer {
+  background:
+    radial-gradient(ellipse at 18% 18%, rgba(255, 255, 255, 0.22) 0 76px, transparent 78px),
+    radial-gradient(ellipse at 78% 22%, rgba(255, 255, 255, 0.18) 0 88px, transparent 90px),
+    linear-gradient(115deg, transparent 0 28%, rgba(120, 200, 255, 0.16) 29% 38%, transparent 39%);
+}
+
+body.page-celebration-pentecost #celebration-layer,
+body.page-celebration-pentecost-monday #celebration-layer {
+  background:
+    radial-gradient(circle at 24% 22%, rgba(255, 210, 90, 0.22) 0 46px, transparent 48px),
+    radial-gradient(circle at 74% 74%, rgba(222, 58, 44, 0.18) 0 58px, transparent 60px),
+    repeating-linear-gradient(70deg, rgba(255, 160, 42, 0.14) 0 18px, transparent 18px 68px);
+}
+
+body.page-celebration-has-fathers-day #celebration-layer::after,
+body[class*="page-celebration-has-birthday"] #celebration-layer::after {
+  content: '';
+  position: absolute;
+  inset: 122px 28px 34px;
+  border: 8px solid rgba(255, 215, 96, 0.26);
+  border-radius: 10px;
+  box-shadow: inset 0 0 0 4px rgba(255, 255, 255, 0.08);
+  pointer-events: none;
+}
+
+body[class*="page-celebration-has-birthday"] #celebration-layer::before {
+  content: '';
+  position: absolute;
+  inset: 112px 0 auto 0;
+  height: 54px;
+  background:
+    radial-gradient(circle at 10% 50%, rgba(255,255,255,0.8) 0 8px, transparent 9px),
+    radial-gradient(circle at 20% 50%, rgba(255,198,92,0.8) 0 8px, transparent 9px),
+    radial-gradient(circle at 30% 50%, rgba(255,115,160,0.75) 0 8px, transparent 9px),
+    radial-gradient(circle at 40% 50%, rgba(100,190,255,0.75) 0 8px, transparent 9px),
+    radial-gradient(circle at 50% 50%, rgba(255,255,255,0.8) 0 8px, transparent 9px),
+    radial-gradient(circle at 60% 50%, rgba(255,198,92,0.8) 0 8px, transparent 9px),
+    radial-gradient(circle at 70% 50%, rgba(255,115,160,0.75) 0 8px, transparent 9px),
+    radial-gradient(circle at 80% 50%, rgba(100,190,255,0.75) 0 8px, transparent 9px),
+    radial-gradient(circle at 90% 50%, rgba(255,255,255,0.8) 0 8px, transparent 9px);
+  opacity: 0.68;
+}
+
+body.page-celebration-christmas #celebration-layer,
+body.page-celebration-christmas-eve #celebration-layer,
+body.page-celebration-boxing-day #celebration-layer {
+  background:
+    radial-gradient(circle at 20% 10%, rgba(255,255,255,0.22) 0 3px, transparent 4px),
+    radial-gradient(circle at 80% 18%, rgba(255,255,255,0.18) 0 4px, transparent 5px),
+    repeating-linear-gradient(135deg, rgba(20, 130, 76, 0.12) 0 26px, rgba(210, 28, 48, 0.12) 26px 52px, transparent 52px 90px);
+}
+
+body.page-celebration-new-year #celebration-layer,
+body.page-celebration-new-year-eve #celebration-layer {
+  background:
+    radial-gradient(circle at 18% 24%, rgba(255, 215, 80, 0.24) 0 2px, transparent 38px),
+    radial-gradient(circle at 76% 16%, rgba(95, 205, 255, 0.2) 0 2px, transparent 44px),
+    radial-gradient(circle at 68% 72%, rgba(255, 90, 160, 0.16) 0 2px, transparent 42px);
+}
+
+body.page-celebration-good-friday #celebration-layer {
+  opacity: 0.58;
+  background:
+    linear-gradient(115deg, transparent 0 22%, rgba(160, 112, 210, 0.14) 23% 32%, transparent 33%),
+    linear-gradient(65deg, transparent 0 62%, rgba(255, 255, 255, 0.1) 63% 70%, transparent 71%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .celebration-token {
+    animation: none;
+  }
 }

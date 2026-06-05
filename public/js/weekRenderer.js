@@ -10,6 +10,7 @@ class WeekRenderer {
     this.mealRenderer = mealRenderer || null;
     this.lastCalendarData = null;
     this.weatherData = null;
+    this.celebrationDecorator = window.CelebrationDecorator ? new CelebrationDecorator() : null;
 
     // Danish day names (full form)
     this.dayNames = ['søndag', 'mandag', 'tirsdag', 'onsdag', 'torsdag', 'fredag', 'lørdag'];
@@ -60,7 +61,7 @@ class WeekRenderer {
    * Check if a date is today
    */
   isToday(date) {
-    const today = new Date();
+    const today = this.celebrationDecorator ? this.celebrationDecorator.getEffectiveToday() : new Date();
     return date.toDateString() === today.toDateString();
   }
 
@@ -68,7 +69,7 @@ class WeekRenderer {
    * Check if a date is in the past
    */
   isPast(date) {
-    const today = new Date();
+    const today = this.celebrationDecorator ? this.celebrationDecorator.getEffectiveToday() : new Date();
     today.setHours(0, 0, 0, 0);
     const checkDate = new Date(date);
     checkDate.setHours(0, 0, 0, 0);
@@ -111,9 +112,14 @@ class WeekRenderer {
   renderDay(date, events) {
     const dayRow = document.createElement('div');
     dayRow.className = 'day-row';
+    const dateKey = this.formatDateKey(date);
+    const isToday = this.isToday(date);
+    const celebrations = this.celebrationDecorator
+      ? this.celebrationDecorator.getCelebrationsForDay(date, events)
+      : [];
 
     // Add today/past classes
-    if (this.isToday(date)) {
+    if (isToday) {
       dayRow.classList.add('today');
     } else if (this.isPast(date)) {
       dayRow.classList.add('past');
@@ -135,13 +141,16 @@ class WeekRenderer {
     dayHeader.appendChild(dayName);
 
     // Add weather forecast if available
-    const dateKey = this.formatDateKey(date);
     if (this.weatherData && this.weatherData[dateKey]) {
       const w = this.weatherData[dateKey];
       const weatherEl = document.createElement('span');
       weatherEl.className = 'day-weather';
       weatherEl.textContent = `${w.emoji} ${w.tempMax}° / ${w.tempMin}°`;
       dayHeader.appendChild(weatherEl);
+    }
+
+    if (this.celebrationDecorator) {
+      this.celebrationDecorator.applyRowCelebrations(dayRow, dayHeader, celebrations, isToday);
     }
 
     // Add meal display if mealRenderer is available
@@ -168,8 +177,8 @@ class WeekRenderer {
 
         const eventTitle = document.createElement('span');
         eventTitle.className = 'event-title';
-        // Add star emoji for Danish holidays
-        const prefix = event.calendarName === 'Helligdage' ? '⭐ ' : '';
+        // Danish holidays get a small event-level flag in addition to row/page art.
+        const prefix = this.celebrationDecorator && this.celebrationDecorator.isHolidayCalendar(event) ? '🇩🇰 ' : '';
         eventTitle.textContent = prefix + event.summary;
 
         eventItem.appendChild(eventTitle);
@@ -183,7 +192,9 @@ class WeekRenderer {
         }
 
         // Birthday age toast
-        if (event.calendarName === 'Fødselsdag') {
+        if (!this.celebrationDecorator
+          ? event.calendarName === 'Fødselsdag'
+          : this.celebrationDecorator.isBirthdayCalendar(event)) {
           const age = this.calcBirthdayAge(event, date);
           if (age !== null) {
             const toast = document.createElement('span');
@@ -204,6 +215,17 @@ class WeekRenderer {
 
     dayRow.appendChild(eventsContainer);
     return dayRow;
+  }
+
+  /**
+   * Get celebrations for the effective today date from the rendered data.
+   */
+  getTodayCelebrations(eventsByDate) {
+    if (!this.celebrationDecorator) return [];
+    const today = this.celebrationDecorator.getEffectiveToday();
+    const todayKey = this.formatDateKey(today);
+    const todayEvents = eventsByDate[todayKey] || [];
+    return this.celebrationDecorator.getCelebrationsForDay(today, todayEvents);
   }
 
   /**
@@ -282,6 +304,10 @@ class WeekRenderer {
     const week2Start = this.parseLocalDate(week2.startDate);
     const week2Dates = this.getWeekDates(week2Start);
     this.renderWeek(this.week2Container, week2.weekNumber, week2Dates, eventsByDate);
+
+    if (this.celebrationDecorator) {
+      this.celebrationDecorator.applyPageCelebrations(this.getTodayCelebrations(eventsByDate));
+    }
 
     console.log(`📅 Rendered weeks ${week1.weekNumber} and ${week2.weekNumber}`);
 
