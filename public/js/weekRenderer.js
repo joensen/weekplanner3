@@ -251,7 +251,15 @@ class WeekRenderer {
    */
   async update(data) {
     if (!data || !data.weeks || data.weeks.length < 2) {
-      console.warn('Invalid calendar data');
+      console.warn('Invalid calendar data, keeping existing display');
+      return;
+    }
+
+    // Don't clear existing events if new data has zero events (likely a failed upstream fetch)
+    const eventsByDate = data.eventsByDate || {};
+    const totalEvents = Object.values(eventsByDate).reduce((sum, arr) => sum + arr.length, 0);
+    if (totalEvents === 0 && this.lastCalendarData) {
+      console.warn('Received empty events while we have existing data, skipping update');
       return;
     }
 
@@ -260,8 +268,6 @@ class WeekRenderer {
 
     // Store for refresh
     this.lastCalendarData = data;
-
-    const eventsByDate = data.eventsByDate || {};
 
     // Week 1 (current week)
     const week1 = data.weeks[0];
@@ -278,6 +284,37 @@ class WeekRenderer {
     this.renderWeek(this.week2Container, week2.weekNumber, week2Dates, eventsByDate);
 
     console.log(`📅 Rendered weeks ${week1.weekNumber} and ${week2.weekNumber}`);
+
+    // Auto-scroll columns so bottom events are visible, but today stays in view
+    this.autoScroll(this.week1Container);
+    this.autoScroll(this.week2Container);
+  }
+
+  /**
+   * Auto-scroll a days-container so bottom content is visible,
+   * but if today is in this column, ensure it remains visible.
+   */
+  autoScroll(container) {
+    // No overflow, nothing to do
+    if (container.scrollHeight <= container.clientHeight) return;
+
+    const todayRow = container.querySelector('.day-row.today');
+
+    if (!todayRow) {
+      // No today in this column - just scroll to bottom
+      container.scrollTop = container.scrollHeight - container.clientHeight;
+      return;
+    }
+
+    // Scroll so that all of today's events are visible,
+    // and as much of the content below today as possible.
+    // Position: today's bottom aligned with container's bottom,
+    // but never scroll today's top out of view.
+    const todayBottom = todayRow.offsetTop + todayRow.offsetHeight;
+    const idealScroll = todayBottom - container.clientHeight;
+
+    // Don't scroll above today's top (would hide the start of today)
+    container.scrollTop = Math.max(0, Math.min(idealScroll, todayRow.offsetTop));
   }
 
   /**
