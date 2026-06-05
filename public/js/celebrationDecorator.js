@@ -253,6 +253,17 @@ class CelebrationDecorator {
     return '';
   }
 
+  stripLeadingIcon(text) {
+    return String(text || '').replace(/^\s*(?:[\p{Extended_Pictographic}\p{Emoji_Presentation}\p{Regional_Indicator}\uFE0F]\s*)+/u, '');
+  }
+
+  getEventDisplayTitle(event) {
+    const icon = this.getEventIcon(event);
+    if (!icon) return event.summary || '';
+    const title = this.stripLeadingIcon(event.summary || '');
+    return `${icon} ${title}`.trim();
+  }
+
   matchBirthday(event) {
     const text = this.normalize(`${event.summary || ''} ${event.description || ''}`);
     const familyName = this.familyNames.find(name => text.includes(this.normalize(name)));

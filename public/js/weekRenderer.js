@@ -177,9 +177,9 @@ class WeekRenderer {
 
         const eventTitle = document.createElement('span');
         eventTitle.className = 'event-title';
-        const eventIcon = this.celebrationDecorator ? this.celebrationDecorator.getEventIcon(event) : '';
-        const prefix = eventIcon ? `${eventIcon} ` : '';
-        eventTitle.textContent = prefix + event.summary;
+        eventTitle.textContent = this.celebrationDecorator
+          ? this.celebrationDecorator.getEventDisplayTitle(event)
+          : event.summary;
 
         eventItem.appendChild(eventTitle);
 
