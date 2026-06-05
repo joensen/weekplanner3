@@ -366,7 +366,7 @@ class CelebrationDecorator {
 
     const tokens = celebrations.flatMap(celebration => celebration.tokens || []);
     const safeTokens = tokens.length ? tokens : ['✨'];
-    const count = Math.min(72, Math.max(28, safeTokens.length * 14));
+    const count = Math.min(36, Math.max(18, safeTokens.length * 7));
 
     for (let i = 0; i < count; i++) {
       const token = document.createElement('span');

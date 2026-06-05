@@ -468,10 +468,7 @@ body {
   top: var(--y);
   font-size: var(--size);
   transform: translate(-50%, -50%) rotate(var(--rotate));
-  opacity: 0.52;
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.28));
-  animation: celebration-float 7s ease-in-out infinite;
-  animation-delay: var(--delay);
+  opacity: 0.42;
   user-select: none;
 }
 
