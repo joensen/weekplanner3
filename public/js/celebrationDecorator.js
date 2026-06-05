@@ -31,6 +31,17 @@ class CelebrationDecorator {
         tokens: ['👔', '☕', '💙', '🎁'],
         aliases: ['fars dag', 'father day', "father's day", 'fathers day']
       },
+      'mothers-day': {
+        key: 'mothers-day',
+        label: 'Mors dag',
+        shortLabel: 'Mor',
+        emoji: '💐',
+        type: 'holiday',
+        className: 'mothers-day',
+        priority: 55,
+        tokens: ['💐', '🌷', '💗', '🎁'],
+        aliases: ['mors dag', 'mother day', "mother's day", 'mothers day']
+      },
       'new-year': {
         key: 'new-year',
         label: 'Nytårsdag',
@@ -326,11 +337,6 @@ class CelebrationDecorator {
     celebrations.forEach(celebration => {
       dayRow.classList.add(`celebration-${celebration.className}`);
     });
-
-    const label = document.createElement('span');
-    label.className = 'celebration-label';
-    label.textContent = celebrations.map(celebration => `${celebration.emoji} ${celebration.label}`).join(' · ');
-    dayHeader.appendChild(label);
   }
 
   applyPageCelebrations(celebrations) {
@@ -367,7 +373,7 @@ class CelebrationDecorator {
       token.className = 'celebration-token';
       token.textContent = safeTokens[i % safeTokens.length];
       token.style.setProperty('--x', `${(i * 37) % 100}%`);
-      token.style.setProperty('--y', `${(i * 53) % 100}%`);
+      token.style.setProperty('--y', `${8 + ((i * 53) % 88)}%`);
       token.style.setProperty('--size', `${26 + ((i * 11) % 34)}px`);
       token.style.setProperty('--rotate', `${-18 + ((i * 17) % 36)}deg`);
       token.style.setProperty('--delay', `${(i % 9) * -0.35}s`);
