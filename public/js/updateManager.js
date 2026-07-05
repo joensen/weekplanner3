@@ -24,7 +24,9 @@ class UpdateManager {
 
     // Connection status tracking
     this.online = navigator.onLine;
+    this.statusGroupEl = null;
     this.statusEl = null;
+    this.recoveryCountEl = null;
     this.initStatusIndicator();
 
     // Listen for browser online/offline events
@@ -36,12 +38,23 @@ class UpdateManager {
    * Create connection status indicator in the header
    */
   initStatusIndicator() {
+    this.statusGroupEl = document.createElement('div');
+    this.statusGroupEl.id = 'connection-status-group';
+
     this.statusEl = document.createElement('div');
     this.statusEl.id = 'connection-status';
+
+    this.recoveryCountEl = document.createElement('div');
+    this.recoveryCountEl.id = 'wifi-recovery-count';
+    this.recoveryCountEl.textContent = 'Wi-Fi 0';
+    this.recoveryCountEl.title = 'Wi-Fi recoveries since reboot';
+
+    this.statusGroupEl.append(this.statusEl, this.recoveryCountEl);
     this.updateStatusIndicator();
+
     const timeEl = document.getElementById('current-time');
     if (timeEl && timeEl.parentNode) {
-      timeEl.parentNode.insertBefore(this.statusEl, timeEl);
+      timeEl.parentNode.insertBefore(this.statusGroupEl, timeEl);
     }
   }
 
@@ -60,6 +73,15 @@ class UpdateManager {
   setOnline(isOnline) {
     this.online = isOnline;
     this.updateStatusIndicator();
+  }
+
+  updateRecoveryCount(count) {
+    if (!this.recoveryCountEl || !Number.isFinite(count)) {
+      return;
+    }
+
+    this.recoveryCountEl.textContent = `Wi-Fi ${count}`;
+    this.recoveryCountEl.classList.toggle('has-recoveries', count > 0);
   }
 
   /**
@@ -218,6 +240,7 @@ class UpdateManager {
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
       this.systemStatus = await response.json();
+      this.updateRecoveryCount(this.systemStatus.recoveryCountSinceBoot);
       this.emitStatus();
     } catch (error) {
       console.error('Error loading system status:', error);

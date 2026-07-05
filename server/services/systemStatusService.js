@@ -1,10 +1,15 @@
 const fs = require('fs').promises;
+const { execFile } = require('child_process');
+const { promisify } = require('util');
+
+const execFileAsync = promisify(execFile);
 
 class SystemStatusService {
   constructor() {
     this.statusFilePath = process.env.SYSTEM_STATUS_FILE || '/var/tmp/weekplanner-network-status.json';
     this.watchdogLogPath = process.env.WIFI_WATCHDOG_LOG_FILE || '/var/log/wifi-watchdog.log';
     this.maxLogLines = parseInt(process.env.WIFI_WATCHDOG_LOG_LINES || '200', 10);
+    this.journalctlPath = process.env.JOURNALCTL_PATH || '/usr/bin/journalctl';
   }
 
   async fileExists(filePath) {
@@ -146,8 +151,35 @@ class SystemStatusService {
     };
   }
 
+  countSuccessfulRecoveries(journalOutput) {
+    return journalOutput
+      .split(/\r?\n/)
+      .filter(line => line.trim().startsWith('Recovered after'))
+      .length;
+  }
+
+  async getRecoveryCountSinceBoot() {
+    try {
+      const { stdout } = await execFileAsync(
+        this.journalctlPath,
+        ['-t', 'wifi-recover', '-b', '--no-pager', '-o', 'cat'],
+        {
+          timeout: 3000,
+          maxBuffer: 256 * 1024
+        }
+      );
+
+      return this.countSuccessfulRecoveries(stdout);
+    } catch (_error) {
+      return 0;
+    }
+  }
+
   async getStatus() {
-    const statusFile = await this.readStatusFile();
+    const [statusFile, recoveryCountSinceBoot] = await Promise.all([
+      this.readStatusFile(),
+      this.getRecoveryCountSinceBoot()
+    ]);
     const normalizedStatusFile = this.normalizeStatusFileStatus(statusFile);
 
     let logStatus = null;
@@ -180,6 +212,7 @@ class SystemStatusService {
       ...chosenStatus,
       statusFilePath: this.statusFilePath,
       watchdogLogPath: this.watchdogLogPath,
+      recoveryCountSinceBoot,
       checkedAt: new Date().toISOString(),
       logTail: logStatus && logStatus.logTail ? logStatus.logTail : []
     };
